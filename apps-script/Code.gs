@@ -53,6 +53,12 @@ function doGet(e) {
       case 'rsvp':
         result = _rsvp(p.id, p.status, Number(p.adults) || 0, Number(p.kids) || 0);
         break;
+      case 'guessName':
+        result = _guessName(p.id, p.name);
+        break;
+      case 'getNameGuesses':
+        result = _getNameGuesses();
+        break;
       default:
         result = { success: false, error: 'Unknown action' };
     }
@@ -115,4 +121,37 @@ function _rsvp(id, status, adults, kids) {
 // ── Helper ───────────────────────────────────────────────────
 function _sheet() {
   return SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
+}
+// ── Name-guess helpers ───────────────────────────────────────
+// NameGuesses sheet must exist with headers: GuestID | GuessedName | Timestamp
+const GUESS_SHEET = 'NameGuesses';
+
+function _guessName(guestId, name) {
+  if (!name || !String(name).trim()) return { success: false, error: 'Name is required' };
+  const cleaned = String(name).trim().substring(0, 40); // max 40 chars
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(GUESS_SHEET);
+  if (!sheet) return { success: false, error: 'NameGuesses sheet not found — please create it.' };
+  sheet.appendRow([
+    guestId || 'anonymous',
+    cleaned,
+    Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'dd-MM-yyyy HH:mm:ss'),
+  ]);
+  SpreadsheetApp.flush();
+  return { success: true };
+}
+
+function _getNameGuesses() {
+  const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(GUESS_SHEET);
+  if (!sheet) return { success: true, guesses: [] };
+  const rows = sheet.getDataRange().getValues();
+  const counts = {};
+  for (let i = 1; i < rows.length; i++) {
+    const name = String(rows[i][1] || '').trim();
+    if (!name) continue;
+    const key = name.toLowerCase();
+    if (!counts[key]) counts[key] = { name, count: 0 };
+    counts[key].count++;
+  }
+  const guesses = Object.values(counts).sort((a, b) => b.count - a.count);
+  return { success: true, guesses };
 }
