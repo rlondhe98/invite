@@ -53,7 +53,7 @@ const App = {
     const el = document.getElementById('splash-family');
     if (!el || !this.guest) return;
     el.textContent = this.lang === 'mr'
-      ? `${this.guest.family} यांचे स्वागत!`
+      ? `${this.guest.family}`
       : `Welcome, ${this.guest.family}!`;
   },
 
