@@ -28,7 +28,7 @@ const CONFIG = {
   // ── Reveal ─────────────────────────────────────────────────────
   // Set revealName: false to show honorTitle.
   // On event morning set to true and push to GitHub to reveal.
-  revealName: true,
+  revealName: false,
   revealText: 'Meet Avani Siddhi Rohan Londhe ❤️',
 
   // ── Event details ──────────────────────────────────────────────
