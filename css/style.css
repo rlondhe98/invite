@@ -303,6 +303,50 @@ body {
   font-size: clamp(.76rem, 2.1vw, .9rem);
   font-style: italic; color: rgba(139,42,66,.82);
 }
+
+/* ─ Reveal celebration ───────────────────────────── */
+.ivc-sub.revealed {
+  font-style: normal; font-weight: 700;
+  font-size: clamp(1rem, 3vw, 1.28rem);
+  letter-spacing: .04em; line-height: 1.35;
+  background: linear-gradient(135deg, #8B5E08 0%, #6B1428 50%, #A8375B 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: revealGlow 2.8s ease-in-out infinite;
+}
+@keyframes revealGlow {
+  0%, 100% { filter: drop-shadow(0 1px 8px rgba(184,134,12,.22)); }
+  50%       { filter: drop-shadow(0 2px 16px rgba(184,134,12,.52)); }
+}
+
+.name-revealed .inv-top {
+  background: linear-gradient(150deg, #FFF5F0 0%, #FFD6E0 50%, #FFF0E5 100%);
+}
+
+.reveal-burst {
+  display: none;
+  position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+}
+.name-revealed .reveal-burst { display: block; }
+.reveal-burst span {
+  position: absolute; top: -8%;
+  font-size: clamp(.7rem, 2.2vw, 1.1rem);
+  opacity: 0;
+  animation: celebDrop linear infinite;
+}
+.reveal-burst span:nth-child(1) { left:  5%; animation-duration: 4.2s; animation-delay:  0s;   }
+.reveal-burst span:nth-child(2) { left: 20%; animation-duration: 5.5s; animation-delay: -2.1s; }
+.reveal-burst span:nth-child(3) { left: 40%; animation-duration: 3.8s; animation-delay:  -.9s; }
+.reveal-burst span:nth-child(4) { left: 60%; animation-duration: 6.1s; animation-delay: -3.2s; }
+.reveal-burst span:nth-child(5) { left: 78%; animation-duration: 4.7s; animation-delay: -1.6s; }
+.reveal-burst span:nth-child(6) { left: 92%; animation-duration: 5.0s; animation-delay:  -.4s; }
+@keyframes celebDrop {
+  0%   { transform: translateY(-8vh)  rotate(0deg);   opacity: .85; }
+  80%  { opacity: .45; }
+  100% { transform: translateY(52vh)  rotate(400deg); opacity: 0;   }
+}
+
 .ivc-hosts {
   font-family: 'Noto Sans Devanagari', 'Playfair Display', serif;
   font-size: clamp(.72rem, 2vw, .86rem);
@@ -566,30 +610,30 @@ body {
 ───────────────────────────────────────────────────── */
 #screen-bubbles {
   height: 100svh;
-  background: linear-gradient(180deg, #1A0510 0%, #0A0212 100%);
+  background: linear-gradient(160deg, #F8EDE4 0%, #F0D8CC 100%);
   flex-direction: column; overflow: hidden;
-  justify-content: flex-start;
+  justify-content: flex-start; align-items: stretch;
 }
 
 .bub-header {
   flex-shrink: 0;
   display: flex; align-items: center; justify-content: space-between;
   padding: clamp(.6rem, 1.8vh, 1rem) 1rem;
-  border-bottom: 1px solid rgba(255,255,255,.08);
+  border-bottom: 1px solid rgba(107,20,40,.12);
 }
 .bub-title {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1rem, 3.2vw, 1.25rem);
-  font-weight: 600; color: #fff;
+  font-weight: 600; color: #6B1428;
 }
 .btn-bub-refresh {
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
-  color: rgba(255,255,255,.75); font-size: 1.15rem;
+  background: rgba(107,20,40,.06); border: 1px solid rgba(107,20,40,.2);
+  color: rgba(107,20,40,.7); font-size: 1.15rem;
   width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all .2s;
 }
-.btn-bub-refresh:hover { background: rgba(255,255,255,.22); color: #fff; transform: rotate(35deg); }
+.btn-bub-refresh:hover { background: rgba(107,20,40,.14); color: #6B1428; transform: rotate(35deg); }
 
 .bub-scene {
   flex: 1; position: relative; overflow: hidden;
@@ -597,7 +641,7 @@ body {
 }
 
 .bub-msg {
-  color: rgba(255,255,255,.5); font-size: .95rem;
+  color: rgba(107,20,40,.55); font-size: .95rem;
   font-family: 'Poppins', sans-serif; text-align: center; padding: 1rem;
 }
 
@@ -625,11 +669,11 @@ body {
   flex-shrink: 0;
   display: flex; flex-direction: column; align-items: center; gap: .3rem;
   padding: clamp(.4rem, 1.2vh, .7rem) 1rem;
-  border-top: 1px solid rgba(255,255,255,.08);
+  border-top: 1px solid rgba(107,20,40,.12);
 }
 .bub-stat {
   font-family: 'Poppins', sans-serif; font-size: .78rem;
-  color: rgba(255,255,255,.45);
+  color: rgba(107,20,40,.55);
 }
 
 /* ─────────────────────────────────────────────────────

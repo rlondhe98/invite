@@ -30,7 +30,10 @@ const CONFIG = {
   // On event morning set to true and push to GitHub to reveal.
   revealName: false,
   revealText: 'Meet Avani Siddhi Rohan Londhe ❤️',
+  revealTextMr: 'आमची लाडकी राजकन्या अवनी सिद्धी रोहन लोंढे ❤️',
 
+  // ── Hosts ──────────────────────────────────────────────────────
+  
   // Hosts shown in the signature at the bottom of the card
   hostNamesEn:  'Siddhi & Rohan',
   hostNamesMr:  'सिद्धी आणि रोहन',
