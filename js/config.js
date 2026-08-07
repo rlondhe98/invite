@@ -38,11 +38,20 @@ const CONFIG = {
   // Sanskrit invocation at top of card — set '' to hide for non-religious events
   ganeshMantra: '॥ श्री गणेशाय नम: ॥',
 
+  // Name-reveal game — hints about Avani (Earth / पृथ्वी) without revealing the name
+  nameHintEn:  'She carries a name as ancient and nurturing as the Earth itself.\nWhat do you think it could be?',
+  nameHintMr:  'तिचे नाव पृथ्वीइतके पुरातन आणि पोषक आहे.\nतुम्हाला काय वाटतं?',
+  nameGuessSheetName: 'NameGuesses',
+
   // ── Event details ──────────────────────────────────────────────
-  eventDateDisplay: 'Sunday, 6 September 2026',
-  eventTime:        '11:00 AM onwards',
+  eventDateDisplay:   'Sunday, 6 September 2026',
+  eventDateDisplayMr: 'रविवार, ६ सप्टेंबर २०२६',
+  eventTime:          '11:00 AM onwards',
+  eventTimeMr:        'सकाळी ११:०० वाजल्यापासून पुढे',
   venueName:        'Hithavardhani Sabha Hall',
+  venueNameMr:      'हितवर्धिनी सभागृह',
   venueAddress:     'Shivaji Nagar, Thane West',
+  venueAddressMr:   'शिवाजी नगर, ठाणे पश्चिम',
   eventISO:         '2026-09-06T11:00:00',
 
   // ── Links & contact ────────────────────────────────────────────
@@ -66,7 +75,7 @@ const CONFIG = {
 
   // ── Google Apps Script ─────────────────────────────────────────
   // Also update SHEET_ID + SHEET_NAME at the top of apps-script/Code.gs.
-  apiUrl: 'https://script.google.com/macros/s/AKfycby9y8xbgdez2pBVucXsaqfVWtLWTIrPsKPhGceCTgPhDtLj90InQrUo7KCgW2riHHTxXA/exec',
+  apiUrl: 'https://script.google.com/macros/s/AKfycbxs8AKRT-9emHLXgHac4cTVO6WZ-eeu1TH8Ict16C6Q5wVL8Gisj1AhsB7umd0jAWxmEQ/exec',
 
   // ── Default language ───────────────────────────────────────────
   defaultLang: 'mr',   // 'mr' = Marathi  |  'en' = English

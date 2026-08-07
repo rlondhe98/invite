@@ -68,6 +68,8 @@ const App = {
     this._fillInvite();
     this._startCountdown();
     this._show('invitation');
+    const scr = document.querySelector('#screen-invitation .inv-scroll');
+    if (scr) scr.scrollTop = 0;
   },
 
   _fillInvite() {
@@ -77,15 +79,20 @@ const App = {
     if (hostsEl) hostsEl.textContent = this.lang === 'mr' ? CONFIG.hostNamesMr : CONFIG.hostNamesEn;
 
     // Event-specific text comes from CONFIG; UI labels come from i18n
-    document.getElementById('ev-invited-by').textContent =
-      this.lang === 'mr' ? CONFIG.invitedByMr : CONFIG.invitedByEn;
-    document.getElementById('ev-title').textContent =
-      this.lang === 'mr' ? CONFIG.eventNameMr : CONFIG.eventNameEn;
+    const invByEl = document.getElementById('ev-invited-by');
+    if (invByEl) invByEl.textContent = this.lang === 'mr' ? CONFIG.invitedByMr : CONFIG.invitedByEn;
+    const evTitleEl = document.getElementById('ev-title');
+    if (evTitleEl) evTitleEl.textContent = this.lang === 'mr' ? CONFIG.eventNameMr : CONFIG.eventNameEn;
 
-    document.getElementById('ev-date').textContent  = CONFIG.eventDateDisplay;
-    document.getElementById('ev-time').textContent  = CONFIG.eventTime;
-    document.getElementById('ev-venue').textContent =
-      `${CONFIG.venueName}, ${CONFIG.venueAddress}`;
+    document.getElementById('ev-date').textContent  = this.lang === 'mr'
+      ? (CONFIG.eventDateDisplayMr || CONFIG.eventDateDisplay)
+      : CONFIG.eventDateDisplay;
+    document.getElementById('ev-time').textContent  = this.lang === 'mr'
+      ? (CONFIG.eventTimeMr || CONFIG.eventTime)
+      : CONFIG.eventTime;
+    document.getElementById('ev-venue').textContent = this.lang === 'mr'
+        ? `${CONFIG.venueNameMr}, ${CONFIG.venueAddressMr}` 
+        : `${CONFIG.venueName}, ${CONFIG.venueAddress}`;
 
     document.getElementById('btn-maps').href = CONFIG.googleMapsUrl;
     document.getElementById('btn-call').href = `tel:${CONFIG.hostPhone}`;
@@ -244,7 +251,64 @@ const App = {
 
     this._show('thankyou');
   },
+  // ── Name-guess screen ─────────────────────────────────────────
+  showNameGuess() {
+    const titleEl = document.getElementById('ng-title');
+    const hintEl  = document.getElementById('ng-hint');
+    if (titleEl) titleEl.textContent = this.lang === 'mr'
+      ? 'तिचे नाव ओळखाल का?' : 'Can you guess her name?';
+    if (hintEl)  hintEl.textContent  = this.lang === 'mr'
+      ? (CONFIG.nameHintMr || '') : (CONFIG.nameHintEn || '');
+    const inp = document.getElementById('ng-input');
+    if (inp) inp.value = '';
+    this._show('nameguess');
+  },
 
+  async submitNameGuess() {
+    const inp = document.getElementById('ng-input');
+    if (!inp) return;
+    const name = inp.value.trim();
+    if (!name) { inp.focus(); return; }
+    const btn = document.querySelector('.btn-ng-go');
+    if (btn) btn.disabled = true;
+    try {
+      await API.guessName(this.guest ? this.guest.id : null, name);
+      inp.value = '';
+      await this.showBubbles();
+    } catch (_) {
+      alert('Could not submit. Please try again.');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  },
+
+  async showBubbles() {
+    this._show('bubbles');
+    if (this._bubbleSim) { this._bubbleSim.stop(); this._bubbleSim = null; }
+    const scene = document.getElementById('bub-scene');
+    if (!scene) return;
+    scene.innerHTML = '<div class="bub-msg">🪻 Loading…</div>';
+    try {
+      const res = await API.getNameGuesses();
+      if (!res.success || !res.guesses || !res.guesses.length) {
+        scene.innerHTML = '<div class="bub-msg">No guesses yet — be the first! 🌟</div>';
+        return;
+      }
+      scene.innerHTML = '';
+      const total = res.guesses.reduce((s, g) => s + g.count, 0);
+      const stat = document.getElementById('bub-stat');
+      if (stat) stat.textContent =
+        `${total} guess${total !== 1 ? 'es' : ''} · ${res.guesses.length} unique name${res.guesses.length !== 1 ? 's' : ''}`;
+      this._bubbleSim = new BubbleSimulation(scene, res.guesses);
+      // defer one frame so the browser lays out the scene before we measure clientWidth/Height
+      requestAnimationFrame(() => this._bubbleSim && this._bubbleSim.start());
+    } catch (err) {
+      const retry = err && err.name === 'AbortError' ? ' (timed out)' : '';
+      scene.innerHTML = `<div class="bub-msg">Could not load guesses${retry}.<br><button onclick="App.refreshBubbles()" style="margin-top:.8rem;padding:.4rem 1rem;border-radius:20px;border:1px solid rgba(107,20,40,.3);background:rgba(107,20,40,.08);cursor:pointer;font-size:.85rem">↻ Retry</button></div>`;
+    }
+  },
+
+  refreshBubbles() { this.showBubbles(); },
   // ── Apply CONFIG.theme as CSS custom properties ────────────────
   _applyTheme() {
     const s = document.documentElement.style;
@@ -260,5 +324,93 @@ const App = {
     s.setProperty('--brown',     t.text);
   },
 };
+
+// ── Bubble Physics Simulation ───────────────────────────────────────────────
+class BubbleSimulation {
+  static COLORS = [
+    ['#FFD580','#B86000'], ['#F28FBD','#8B1A50'], ['#A8E6CF','#1B6040'],
+    ['#FFB3C6','#7A0030'], ['#C3B1E1','#4A2A7E'], ['#AEDFF7','#0A4E7C'],
+    ['#FFD3B6','#903800'], ['#B5EAD7','#0E5840'],
+  ];
+
+  constructor(container, guesses) {
+    this.container = container;
+    this.guesses   = guesses;
+    this.bubbles   = [];
+    this._raf      = null;
+  }
+
+  start() {
+    const W = this.container.clientWidth  || 320;
+    const H = this.container.clientHeight || 400;
+    const maxCount = Math.max(...this.guesses.map(g => g.count), 1);
+    const minR = 30, maxR = Math.min(W, H) * 0.22;
+
+    this.guesses.forEach((g, i) => {
+      const r   = minR + (g.count / maxCount) * (maxR - minR);
+      const col = BubbleSimulation.COLORS[i % BubbleSimulation.COLORS.length];
+      const x   = r + Math.random() * Math.max(W - 2 * r, 1);
+      const y   = r + Math.random() * Math.max(H - 2 * r, 1);
+      const vx  = (Math.random() - 0.5) * 0.9;
+      const vy  = (Math.random() - 0.5) * 0.9;
+
+      const el  = document.createElement('div');
+      el.className = 'bubble';
+      el.style.cssText = [
+        `left:${x - r}px`, `top:${y - r}px`,
+        `width:${r * 2}px`, `height:${r * 2}px`,
+        `background:radial-gradient(circle at 35% 35%, ${col[0]}, ${col[1]})`,
+        `box-shadow:0 0 ${Math.round(r * 0.4)}px rgba(0,0,0,.28),inset 0 -4px 12px rgba(255,255,255,.18)`,
+      ].join(';');
+      el.innerHTML =
+        `<span class="b-name">${g.name}</span><span class="b-count">${g.count}</span>`;
+      el.title = `${g.name}: ${g.count} guess${g.count !== 1 ? 'es' : ''}`;
+      this.container.appendChild(el);
+      this.bubbles.push({ el, x, y, r, vx, vy });
+    });
+
+    this._tick();
+  }
+
+  _tick() {
+    const W  = this.container.clientWidth  || 320;
+    const H  = this.container.clientHeight || 400;
+    const bs = this.bubbles;
+
+    for (let i = 0; i < bs.length; i++) {
+      const b = bs[i];
+      b.vx += (W / 2 - b.x) * 0.00016;
+      b.vy += (H / 2 - b.y) * 0.00016;
+
+      for (let j = i + 1; j < bs.length; j++) {
+        const o  = bs[j];
+        const dx = b.x - o.x, dy = b.y - o.y;
+        const d  = Math.sqrt(dx * dx + dy * dy) || 1;
+        const mn = b.r + o.r + 8;
+        if (d < mn) {
+          const f = (mn - d) / d * 0.05;
+          b.vx += dx * f; b.vy += dy * f;
+          o.vx -= dx * f; o.vy -= dy * f;
+        }
+      }
+
+      if (b.x - b.r < 0)  { b.x = b.r;      b.vx =  Math.abs(b.vx) * 0.7; }
+      if (b.x + b.r > W)  { b.x = W - b.r;  b.vx = -Math.abs(b.vx) * 0.7; }
+      if (b.y - b.r < 0)  { b.y = b.r;      b.vy =  Math.abs(b.vy) * 0.7; }
+      if (b.y + b.r > H)  { b.y = H - b.r;  b.vy = -Math.abs(b.vy) * 0.7; }
+
+      b.vx *= 0.984; b.vy *= 0.984;
+      b.x  += b.vx;  b.y  += b.vy;
+      b.el.style.left = `${b.x - b.r}px`;
+      b.el.style.top  = `${b.y - b.r}px`;
+    }
+    this._raf = requestAnimationFrame(() => this._tick());
+  }
+
+  stop() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._raf = null;
+  }
+}
 
 document.addEventListener('DOMContentLoaded', () => App.init());

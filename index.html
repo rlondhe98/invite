@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
+<div id="app">
 
   <!-- ═══════════════════════════════════
        SCREEN 1 — Loading
@@ -53,108 +54,148 @@
 
   <!-- ═══════════════════════════════════
        SCREEN 3 — Invitation
+       ▸ Place your physical card photo at:  img/invitation.jpg
   ════════════════════════════════════ -->
   <div id="screen-invitation" class="screen">
-    <div class="inv-wrap">
-      <article class="inv-card">
 
-        <!-- Floral corner decorations -->
-        <span class="corner corner-tl" aria-hidden="true">🌸</span>
-        <span class="corner corner-tr" aria-hidden="true">🌸</span>
-        <span class="corner corner-bl" aria-hidden="true">🌸</span>
-        <span class="corner corner-br" aria-hidden="true">🌸</span>
+    <!-- Petals float over both panels -->
+    <div class="fp-wrap" aria-hidden="true">
+      <span class="fp">🌸</span><span class="fp">🌺</span>
+      <span class="fp">🌸</span><span class="fp">🪷</span>
+      <span class="fp">🌸</span><span class="fp">🌺</span>
+    </div>
 
-        <!-- Ganesh header -->
-        <header class="inv-header">
-          <span class="ganesh-icon" aria-hidden="true">🕉</span>
-          <p class="ganesh-mantra" id="ev-mantra">॥ श्री गणेशाय नम: ॥</p>
-          <div class="mantra-rule" role="separator"></div>
-        </header>
-
-        <!-- Invitation body: tag · lotus · title · cradle · subtitle -->
-        <div class="inv-body">
-          <p class="inv-tag" id="ev-invited-by"></p>
-          <p class="lotus-div" aria-hidden="true">〰 🪷 〰</p>
-          <h1 class="inv-title" id="ev-title">NAMING CEREMONY</h1>
-          <div class="baby-cradle-wrap">
-            <span class="cradle-bell" aria-hidden="true">🔔</span>
-            <div class="cradle-box">
-              <span class="cradle-baby" id="hero-emoji" aria-hidden="true"></span>
-            </div>
-          </div>
-          <p class="baby-name" id="baby-name"></p>
-          <p class="heart-div" aria-hidden="true">— ♥ —</p>
+    <!-- ① Invitation card top panel -->
+    <div class="inv-top">
+      <div class="ivc-bg" aria-hidden="true">
+        <div class="ivc-circle ivc-c1"></div>
+        <div class="ivc-circle ivc-c2"></div>
+        <div class="ivc-circle ivc-c3"></div>
+      </div>
+      <div class="inv-card">
+        <p class="ivc-mantra" id="ev-mantra">॥ श्री गणेशाय नम: ॥</p>
+        <div class="ivc-ornament-row" aria-hidden="true">
+          <span class="ivc-line"></span><span>🪷</span><span class="ivc-line"></span>
         </div>
-
-        <!-- Event details: Date → Venue → Time (physical card order) -->
-        <section class="inv-details" aria-label="Event details">
-          <div class="detail">
-            <span class="d-icon" aria-hidden="true">📅</span>
-            <div>
-              <p class="d-label" data-i18n="date">DATE</p>
-              <p class="d-value" id="ev-date"></p>
-            </div>
-          </div>
-          <div class="detail">
-            <span class="d-icon" aria-hidden="true">📍</span>
-            <div>
-              <p class="d-label" data-i18n="venue">VENUE</p>
-              <p class="d-value" id="ev-venue"></p>
-            </div>
-          </div>
-          <div class="detail">
-            <span class="d-icon" aria-hidden="true">🕐</span>
-            <div>
-              <p class="d-label" data-i18n="time">TIME</p>
-              <p class="d-value" id="ev-time"></p>
-            </div>
-          </div>
-        </section>
-
-        <!-- Host signature -->
-        <div class="host-sign">
-          <p class="lotus-div" aria-hidden="true">〰 🪷 〰</p>
-          <p class="with-love" data-i18n="withLove">With love,</p>
-          <p class="host-names" id="ev-hosts"></p>
+        <p class="ivc-invite" id="ev-invited-by"></p>
+        <h2 class="ivc-title" id="ev-title">NAMING CEREMONY</h2>
+        <p class="ivc-sub" id="baby-name"></p>
+        <div class="ivc-ornament-row ivc-host-row" aria-hidden="true">
+          <span class="ivc-line"></span><span class="ivc-star">❋</span><span class="ivc-line"></span>
         </div>
+        <p class="ivc-hosts" id="ev-hosts"></p>
+      </div>
+      <div class="inv-card-fade" aria-hidden="true"></div>
+    </div>
 
-        <!-- Countdown -->
-        <section class="cd-wrap" aria-label="Countdown">
-          <div class="countdown">
-            <div class="cd-box"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl" data-i18n="days">Days</span></div>
-            <span class="cd-sep" aria-hidden="true">:</span>
-            <div class="cd-box"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl" data-i18n="hours">Hours</span></div>
-            <span class="cd-sep" aria-hidden="true">:</span>
-            <div class="cd-box"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl" data-i18n="minutes">Minutes</span></div>
-            <span class="cd-sep" aria-hidden="true">:</span>
-            <div class="cd-box"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl" data-i18n="seconds">Seconds</span></div>
-          </div>
-        </section>
+    <!-- ② Details + actions (bottom, no scroll) -->
+    <div class="inv-bottom">
 
-        <!-- Quick-action links -->
-        <section class="action-row" aria-label="Quick actions">
-          <a id="btn-maps" class="btn-action" href="#" target="_blank" rel="noopener noreferrer">
-            🗺️ <span data-i18n="getDirections">Get Directions</span>
+      <div class="glass-chips">
+        <div class="g-chip">
+          <span aria-hidden="true">📅</span>
+          <div><p class="g-chip-lbl" data-i18n="date">DATE</p><p class="g-chip-val" id="ev-date"></p></div>
+        </div>
+        <div class="g-chip">
+          <span aria-hidden="true">🕐</span>
+          <div><p class="g-chip-lbl" data-i18n="time">TIME</p><p class="g-chip-val" id="ev-time"></p></div>
+        </div>
+        <div class="g-chip g-chip-full">
+          <span aria-hidden="true">📍</span>
+          <div><p class="g-chip-lbl" data-i18n="venue">VENUE</p><p class="g-chip-val" id="ev-venue"></p></div>
+        </div>
+      </div>
+
+      <div class="g-countdown" aria-label="Countdown">
+        <div class="cd-box"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl" data-i18n="days">Days</span></div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-box"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl" data-i18n="hours">Hours</span></div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-box"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl" data-i18n="minutes">Minutes</span></div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-box"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl" data-i18n="seconds">Seconds</span></div>
+      </div>
+
+      <div class="inv-actions">
+        <div class="inv-quick-row">
+          <a id="btn-maps" class="btn-quick" href="#" target="_blank" rel="noopener noreferrer">
+            🗺️ <span data-i18n="getDirections">Directions</span>
           </a>
-          <a id="btn-call" class="btn-action" href="#">
-            📞 <span data-i18n="callHost">Call Host</span>
+          <a id="btn-call" class="btn-quick" href="#">
+            📞 <span data-i18n="callHost">Call</span>
           </a>
-        </section>
+        </div>
+        <button class="btn-name-guess" onclick="App.showNameGuess()">
+          <span aria-hidden="true">✨</span>
+          <span data-i18n="guessNameCta">Can you guess her name?</span>
+          <span aria-hidden="true">🌍</span>
+        </button>
+        
+        <button class="btn-rsvp" id="btn-rsvp" onclick="App.showRsvp()">
+          <span data-i18n="rsvpButton">RSVP</span>
+        </button>
+        <p class="rsvp-status" id="rsvp-status"></p>
+      </div>
 
-        <!-- RSVP -->
-        <section class="rsvp-section">
-          <button class="btn-rsvp" id="btn-rsvp" onclick="App.showRsvp()">
-            <span data-i18n="rsvpButton">RSVP</span>
+      <footer class="inv-foot">
+        <button class="btn-lang-toggle" id="btn-lang-toggle" onclick="App.toggleLang()">मराठी</button>
+      </footer>
+
+    </div><!-- /.inv-bottom -->
+  </div><!-- /#screen-invitation -->
+
+  <!-- ═══════════════════════════════════
+       SCREEN 3.5 — Name Guess
+       Avani = Earth / पृथ्वी — hints shown without revealing the name
+  ════════════════════════════════════ -->
+  <div id="screen-nameguess" class="screen">
+    <div class="ng-bg-deco" aria-hidden="true">
+      <span>🌍</span><span>🌱</span><span>🪷</span><span>🌏</span><span>🌿</span>
+    </div>
+    <div class="ng-wrap">
+      <button class="btn-scr-back" onclick="App.showInvitation()">
+        ← <span data-i18n="back">Back</span>
+      </button>
+      <div class="ng-card">
+        <div class="ng-hero-icons" aria-hidden="true">
+          <span>🌍</span><span>🌱</span><span>🪷</span>
+        </div>
+        <h2 class="ng-title" id="ng-title">Can you guess her name?</h2>
+        <p class="ng-hint" id="ng-hint"></p>
+        <div class="ng-pills" aria-label="Hints">
+          <span class="ng-pill" data-i18n="hint1">As old as the Earth</span>
+          <span class="ng-pill" data-i18n="hint2">Rooted in nature</span>
+        </div>
+        <div class="ng-form">
+          <input type="text" id="ng-input" class="ng-input"
+                 autocomplete="off" maxlength="20"
+                 placeholder="Type your guess…" />
+          <button class="btn-ng-go" onclick="App.submitNameGuess()">
+            Submit ✨
           </button>
-          <p class="rsvp-status" id="rsvp-status"></p>
-        </section>
+        </div>
+        <button class="btn-see-bubbles" onclick="App.showBubbles()">
+          🫧 <span data-i18n="seeGuesses">See all guesses</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <!-- Language toggle -->
-        <footer class="inv-footer">
-          <button class="btn-lang-toggle" id="btn-lang-toggle" onclick="App.toggleLang()">मराठी</button>
-        </footer>
-
-      </article>
+  <!-- ═══════════════════════════════════
+       SCREEN 3.6 — Bubble Visualization
+  ════════════════════════════════════ -->
+  <div id="screen-bubbles" class="screen">
+    <div class="bub-header">
+      <button class="btn-scr-back slim" onclick="App.showNameGuess()" aria-label="Back">←</button>
+      <h2 class="bub-title" data-i18n="guessesTitle">Name Guesses 🫧</h2>
+      <button class="btn-bub-refresh" onclick="App.refreshBubbles()" aria-label="Refresh">↻</button>
+    </div>
+    <div class="bub-scene" id="bub-scene"></div>
+    <div class="bub-footer">
+      <p class="bub-stat" id="bub-stat"></p>
+      <button class="btn-scr-back" onclick="App.showInvitation()">
+        ← <span data-i18n="backToInvite">Back to Invitation</span>
+      </button>
     </div>
   </div>
 
@@ -264,5 +305,6 @@
   <script src="js/api.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/app.js"></script>
+</div><!-- /#app -->
 </body>
 </html>
