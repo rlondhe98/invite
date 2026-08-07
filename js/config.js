@@ -18,8 +18,8 @@ const CONFIG = {
   invitedByMr: 'आनंदाने आपले सहर्ष\nस्वागत आहे',
 
   // Central emoji on splash screen and invitation card
-  // 👶 naming  |  🎂 birthday  |  💒 wedding  |  💍 engagement  |  🎓 graduation
-  splashEmoji: '👶',
+  // 👼🏼 naming  |  🎂 birthday  |  💒 wedding  |  💍 engagement  |  🎓 graduation
+  splashEmoji: '👼🏼',
 
   // Subject line below the emoji (shown before reveal)
   honorTitleEn: 'of our beloved Baby Girl',
