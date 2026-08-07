@@ -98,9 +98,19 @@ const App = {
     document.getElementById('btn-call').href = `tel:${CONFIG.hostPhone}`;
 
     // Hero title: reveal on event day or show honorTitle
-    document.getElementById('baby-name').textContent = CONFIG.revealName
-      ? CONFIG.revealText
-      : (this.lang === 'mr' ? CONFIG.honorTitleMr : CONFIG.honorTitleEn);
+    const babyNameEl = document.getElementById('baby-name');
+    const invScreen  = document.getElementById('screen-invitation');
+    if (CONFIG.revealName) {
+      babyNameEl.textContent = this.lang === 'mr'
+        ? (CONFIG.revealTextMr || CONFIG.revealText)
+        : CONFIG.revealText;
+      babyNameEl.classList.add('revealed');
+      invScreen.classList.add('name-revealed');
+    } else {
+      babyNameEl.textContent = this.lang === 'mr' ? CONFIG.honorTitleMr : CONFIG.honorTitleEn;
+      babyNameEl.classList.remove('revealed');
+      invScreen.classList.remove('name-revealed');
+    }
 
     // Reflect existing RSVP status if already submitted
     const btn    = document.getElementById('btn-rsvp');
