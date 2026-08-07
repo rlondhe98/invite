@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="नामकरण सोहळा — Naming Ceremony Invitation" />
+  <meta property="og:title" content="नामकरण सोहळा ❤️" />
+  <meta property="og:description" content="You are cordially invited to our naming ceremony" />
+  <meta property="og:type" content="website" />
+  <title>Naming Ceremony</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Poppins:wght@300;400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 1 — Loading
+  ════════════════════════════════════ -->
+  <div id="screen-loading" class="screen active">
+    <div class="loading-body">
+      <span class="footprints-anim">👣</span>
+      <p data-i18n="loading">Loading…</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 2 — Splash / Language pick
+  ════════════════════════════════════ -->
+  <div id="screen-splash" class="screen">
+    <span class="floral-tl" aria-hidden="true">✿</span>
+    <span class="floral-tr" aria-hidden="true">✿</span>
+
+    <div class="splash-body">
+      <span class="splash-baby" id="splash-emoji" aria-hidden="true"></span>
+      <h1 class="splash-title" data-i18n="welcome">Welcome</h1>
+      <p class="splash-sub" data-i18n="welcomeSubtitle">आपले सहर्ष स्वागत आहे</p>
+      <p class="splash-family" id="splash-family"></p>
+      <p class="lang-prompt" data-i18n="chooseLanguage">Choose Language</p>
+      <div class="lang-group">
+        <button class="btn-lang" onclick="App.setLang('mr')">मराठी</button>
+        <button class="btn-lang" onclick="App.setLang('en')">English</button>
+      </div>
+    </div>
+
+    <p class="floral-strip" aria-hidden="true">✿ ❀ ✿ ❀ ✿ ❀ ✿</p>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 3 — Invitation
+  ════════════════════════════════════ -->
+  <div id="screen-invitation" class="screen">
+    <div class="inv-wrap">
+      <article class="inv-card">
+
+        <!-- Header -->
+        <header class="inv-header">
+          <p class="ornament" aria-hidden="true">❦ ✿ ❦</p>
+          <p class="inv-tag" id="ev-invited-by">You are cordially invited to the</p>
+          <h1 class="inv-title" id="ev-title">Naming Ceremony</h1>
+          <div class="inv-baby">
+            <span class="baby-lg" id="hero-emoji" aria-hidden="true"></span>
+            <p class="baby-name" id="baby-name"></p>
+          </div>
+          <p class="ornament" aria-hidden="true">❦ ✿ ❦</p>
+        </header>
+
+        <div class="gold-rule" role="separator"></div>
+
+        <!-- Event details -->
+        <section class="inv-details" aria-label="Event details">
+          <div class="detail">
+            <span class="d-icon" aria-hidden="true">📅</span>
+            <div>
+              <p class="d-label" data-i18n="date">Date</p>
+              <p class="d-value" id="ev-date"></p>
+            </div>
+          </div>
+          <div class="detail">
+            <span class="d-icon" aria-hidden="true">🕐</span>
+            <div>
+              <p class="d-label" data-i18n="time">Time</p>
+              <p class="d-value" id="ev-time"></p>
+            </div>
+          </div>
+          <div class="detail">
+            <span class="d-icon" aria-hidden="true">📍</span>
+            <div>
+              <p class="d-label" data-i18n="venue">Venue</p>
+              <p class="d-value" id="ev-venue"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Countdown -->
+        <section class="cd-wrap" aria-label="Countdown">
+          <div class="countdown">
+            <div class="cd-box"><span class="cd-num" id="cd-d">--</span><span class="cd-lbl" data-i18n="days">Days</span></div>
+            <span class="cd-sep" aria-hidden="true">:</span>
+            <div class="cd-box"><span class="cd-num" id="cd-h">--</span><span class="cd-lbl" data-i18n="hours">Hours</span></div>
+            <span class="cd-sep" aria-hidden="true">:</span>
+            <div class="cd-box"><span class="cd-num" id="cd-m">--</span><span class="cd-lbl" data-i18n="minutes">Minutes</span></div>
+            <span class="cd-sep" aria-hidden="true">:</span>
+            <div class="cd-box"><span class="cd-num" id="cd-s">--</span><span class="cd-lbl" data-i18n="seconds">Seconds</span></div>
+          </div>
+        </section>
+
+        <!-- Quick-action links -->
+        <section class="action-row" aria-label="Quick actions">
+          <a id="btn-maps" class="btn-action" href="#" target="_blank" rel="noopener noreferrer">
+            🗺️ <span data-i18n="getDirections">Get Directions</span>
+          </a>
+          <a id="btn-call" class="btn-action" href="#">
+            📞 <span data-i18n="callHost">Call Host</span>
+          </a>
+        </section>
+
+        <!-- RSVP -->
+        <section class="rsvp-section">
+          <button class="btn-rsvp" id="btn-rsvp" onclick="App.showRsvp()">
+            <span data-i18n="rsvpButton">RSVP</span>
+          </button>
+          <p class="rsvp-status" id="rsvp-status"></p>
+        </section>
+
+        <!-- Language toggle -->
+        <footer class="inv-footer">
+          <button class="btn-lang-toggle" id="btn-lang-toggle" onclick="App.toggleLang()">मराठी</button>
+        </footer>
+
+      </article>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 4 — RSVP Form
+  ════════════════════════════════════ -->
+  <div id="screen-rsvp" class="screen">
+    <div class="form-wrap">
+      <div class="form-card">
+
+        <button class="btn-back" onclick="App.showInvitation()">
+          ← <span data-i18n="back">Back</span>
+        </button>
+
+        <div class="form-head">
+          <span class="form-icon" aria-hidden="true">💌</span>
+          <h2 data-i18n="rsvpTitle">Will your family attend?</h2>
+          <p class="form-family" id="form-family"></p>
+        </div>
+
+        <!-- Step A: Yes / No -->
+        <div id="step-choice" class="form-step">
+          <div class="choice-list">
+            <button class="btn-choice choice-y" onclick="App.pickYes()">
+              <span aria-hidden="true">🎉</span>
+              <span data-i18n="yes">Yes, we'll be there!</span>
+            </button>
+            <button class="btn-choice choice-n" onclick="App.pickNo()">
+              <span aria-hidden="true">😢</span>
+              <span data-i18n="no">Sorry, can't make it</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step B: Headcount (only if Yes) -->
+        <div id="step-count" class="form-step hidden">
+          <div class="headcount">
+            <div class="hc-row">
+              <span class="hc-label" data-i18n="adultsLabel">Adults</span>
+              <div class="stepper" role="group" aria-label="Adults count">
+                <button class="btn-step" onclick="App.dec('adults')" aria-label="Decrease">−</button>
+                <span class="step-val" id="val-adults">1</span>
+                <button class="btn-step" onclick="App.inc('adults')" aria-label="Increase">+</button>
+              </div>
+            </div>
+            <div class="hc-row">
+              <span class="hc-label" data-i18n="childrenLabel">Children</span>
+              <div class="stepper" role="group" aria-label="Children count">
+                <button class="btn-step" onclick="App.dec('kids')" aria-label="Decrease">−</button>
+                <span class="step-val" id="val-kids">0</span>
+                <button class="btn-step" onclick="App.inc('kids')" aria-label="Increase">+</button>
+              </div>
+            </div>
+          </div>
+          <button class="btn-confirm" onclick="App.confirmRsvp()">
+            <span data-i18n="submitRsvp">Confirm RSVP</span>
+          </button>
+        </div>
+
+        <!-- Submitting spinner -->
+        <div id="step-spinner" class="form-step hidden">
+          <div class="spinner" role="status" aria-label="Submitting"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 5 — Thank You
+  ════════════════════════════════════ -->
+  <div id="screen-thankyou" class="screen">
+    <div class="ty-body">
+      <span class="ty-heart float-anim" aria-hidden="true">❤️</span>
+      <h1 class="ty-title" data-i18n="thankYouTitle">Thank You!</h1>
+      <p class="ty-msg" id="ty-msg"></p>
+      <p class="ty-family" id="ty-family"></p>
+      <div class="ty-summary" id="ty-summary"></div>
+      <button class="btn-action" onclick="App.showInvitation()" style="margin-top:2rem">
+        ← <span data-i18n="backToInvite">Back to Invitation</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SCREEN 6 — Error
+  ════════════════════════════════════ -->
+  <div id="screen-error" class="screen">
+    <div class="err-body">
+      <span class="err-icon" aria-hidden="true">🔍</span>
+      <h2>Invitation Not Found</h2>
+      <p>Please use the personalized link shared with you on WhatsApp.</p>
+    </div>
+  </div>
+
+  <noscript>
+    <div style="text-align:center;padding:3rem;font-family:sans-serif;color:#3D2B1F">
+      Please enable JavaScript to view this invitation.
+    </div>
+  </noscript>
+
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
