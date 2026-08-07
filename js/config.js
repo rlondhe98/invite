@@ -18,8 +18,8 @@ const CONFIG = {
   invitedByMr: 'आनंदाने आपले सहर्ष\nस्वागत आहे',
 
   // Central emoji on splash screen and invitation card
-  // 👶 naming  |  🎂 birthday  |  💒 wedding  |  💍 engagement  |  🎓 graduation
-  splashEmoji: '👶',
+  // 👼🏼 naming  |  🎂 birthday  |  💒 wedding  |  💍 engagement  |  🎓 graduation
+  splashEmoji: '👼🏼',
 
   // Subject line below the emoji (shown before reveal)
   honorTitleEn: 'of our beloved Baby Girl',
@@ -28,7 +28,7 @@ const CONFIG = {
   // ── Reveal ─────────────────────────────────────────────────────
   // Set revealName: false to show honorTitle.
   // On event morning set to true and push to GitHub to reveal.
-  revealName: true,
+  revealName: false,
   revealText: 'Meet Avani Siddhi Rohan Londhe ❤️',
   revealTextMr: 'आमची लाडकी राजकन्या अवनी सिद्धी रोहन लोंढे ❤️',
 
