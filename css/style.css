@@ -700,6 +700,9 @@ body {
   line-height: 1.8;
   text-align: left;
 }
+.ty-summary:empty {
+  display: none;
+}
 
 /* ─────────────────────────────────────────────────────
    SCREEN 6 — Error
