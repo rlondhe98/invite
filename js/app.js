@@ -71,6 +71,11 @@ const App = {
   },
 
   _fillInvite() {
+    const mantraEl = document.getElementById('ev-mantra');
+    if (mantraEl && CONFIG.ganeshMantra) mantraEl.textContent = CONFIG.ganeshMantra;
+    const hostsEl = document.getElementById('ev-hosts');
+    if (hostsEl) hostsEl.textContent = this.lang === 'mr' ? CONFIG.hostNamesMr : CONFIG.hostNamesEn;
+
     // Event-specific text comes from CONFIG; UI labels come from i18n
     document.getElementById('ev-invited-by').textContent =
       this.lang === 'mr' ? CONFIG.invitedByMr : CONFIG.invitedByEn;

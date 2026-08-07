@@ -195,19 +195,18 @@ body {
    SCREEN 3 — Invitation
 ───────────────────────────────────────────────────── */
 #screen-invitation {
-  /* Lock to viewport — card never scrolls */
   height: 100dvh;
   max-height: 100dvh;
   overflow: hidden;
   justify-content: center;
-  padding: clamp(.4rem, 1.5vh, .85rem);
+  padding: clamp(.35rem, 1.2vh, .75rem);
   background: linear-gradient(160deg, var(--cream) 0%, var(--cream-dk) 60%);
 }
 
 .inv-wrap {
   width: 100%;
   max-width: 460px;
-  height: calc(100dvh - clamp(.8rem, 3vh, 1.7rem));
+  height: calc(100dvh - clamp(.7rem, 2.4vh, 1.5rem));
   max-height: 820px;
   display: flex;
   flex-direction: column;
@@ -217,121 +216,198 @@ body {
   display: flex;
   flex-direction: column;
   flex: 1;
-  min-height: 0;          /* allows flex children to compress below content size */
-  background: var(--white);
+  min-height: 0;
+  background: #FFFAF8;
   border-radius: var(--r-lg);
   border: 1.5px solid var(--gold-lt);
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), inset 0 0 0 4px rgba(212,104,138,.05);
   overflow: hidden;
-}
-
-/* Header */
-.inv-header {
-  flex-shrink: 0;
-  background: linear-gradient(160deg, var(--hdr1) 0%, var(--hdr2) 100%);
-  padding: clamp(.6rem, 2.2vh, 1.4rem) 1.4rem clamp(.5rem, 1.8vh, 1.1rem);
-  text-align: center;
   position: relative;
 }
 
-/* Decorative corner flowers on header */
-.inv-header::before,
-.inv-header::after {
-  content: '✿';
+/* Floral corner decorations */
+.corner {
   position: absolute;
-  top: .7rem;
-  font-size: 1.6rem;
-  color: rgba(212,104,138,.30);
+  font-size: clamp(1.3rem, 3.2vw, 1.7rem);
   pointer-events: none;
+  opacity: .45;
+  z-index: 1;
+  line-height: 1;
 }
-.inv-header::before { left: 1rem; }
-.inv-header::after  { right: 1rem; }
+.corner-tl { top: .5rem;  left: .5rem;  transform: rotate(-30deg); }
+.corner-tr { top: .5rem;  right: .5rem; transform: rotate(30deg);  }
+.corner-bl { bottom: .5rem; left: .5rem;  transform: rotate(150deg); }
+.corner-br { bottom: .5rem; right: .5rem; transform: rotate(-150deg); }
 
-.ornament {
-  font-size: clamp(.9rem, 2.5vw, 1.1rem);
+/* Ganesh header */
+.inv-header {
+  flex-shrink: 0;
+  text-align: center;
+  padding: clamp(.4rem, 1.3vh, .8rem) 2.5rem clamp(.28rem, .82vh, .48rem);
+  background: linear-gradient(160deg, var(--hdr1) 0%, var(--hdr2) 100%);
+}
+
+.ganesh-icon {
+  font-size: clamp(1.2rem, 3.2vh, 1.6rem);
+  display: block;
+  color: var(--gold-dk);
+  margin-bottom: .04rem;
+}
+
+.ganesh-mantra {
+  font-family: 'Noto Sans Devanagari', serif;
+  font-size: clamp(.66rem, 1.75vw, .8rem);
+  color: var(--gold-dk);
+  letter-spacing: .06em;
+}
+
+.mantra-rule {
+  height: 1px;
+  margin: clamp(.24rem, .62vh, .38rem) auto 0;
+  width: 58%;
+  background: linear-gradient(to right, transparent, var(--gold) 30%, var(--gold) 70%, transparent);
+}
+
+/* Invitation body */
+.inv-body {
+  flex-shrink: 0;
+  text-align: center;
+  padding: clamp(.32rem, 1vh, .6rem) 2rem clamp(.18rem, .55vh, .34rem);
+}
+
+.lotus-div {
+  font-size: clamp(.66rem, 1.75vw, .8rem);
   color: var(--gold);
-  letter-spacing: .5em;
-  margin: clamp(.15rem, .5vh, .35rem) 0;
+  margin: clamp(.1rem, .3vh, .2rem) 0;
+  letter-spacing: .12em;
+}
+
+.heart-div {
+  font-size: clamp(.68rem, 1.8vw, .82rem);
+  color: var(--gold-dk);
+  margin: clamp(.1rem, .3vh, .2rem) 0;
+  letter-spacing: .22em;
 }
 
 .inv-tag {
-  font-size: clamp(.62rem, 1.6vw, .73rem);
-  text-transform: uppercase;
-  letter-spacing: .11em;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(.66rem, 1.75vw, .8rem);
+  font-style: italic;
   color: var(--brown-md);
-  margin-bottom: .2rem;
+  line-height: 1.5;
+  white-space: pre-line;
 }
 
 .inv-title {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.35rem, 4.5vw, 1.85rem);
-  color: var(--brown);
-  line-height: 1.2;
-  margin-bottom: clamp(.4rem, 1.2vh, .8rem);
+  font-size: clamp(1.2rem, 4vw, 1.65rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--gold-dk);
+  line-height: 1.1;
+  margin: clamp(.1rem, .3vh, .2rem) 0;
 }
 
-.inv-baby {
+/* Cradle illustration */
+.baby-cradle-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: .2rem;
-  margin: clamp(.2rem, .7vh, .5rem) 0;
+  gap: .06rem;
+  margin: clamp(.14rem, .38vh, .22rem) 0 clamp(.08rem, .25vh, .15rem);
 }
 
-.baby-lg {
-  font-size: clamp(1.6rem, 4.5vh, 2.2rem);
+.cradle-bell {
+  font-size: clamp(.85rem, 2.3vh, 1.1rem);
   display: block;
-  animation: floatY 3s ease-in-out infinite;
+  animation: floatY 2.2s ease-in-out infinite;
+}
+
+.cradle-box {
+  background: linear-gradient(170deg, var(--hdr1), var(--cream-dk));
+  border: 1.5px solid var(--gold-lt);
+  border-radius: 50% 50% 42% 42% / 35% 35% 65% 65%;
+  padding: clamp(.28rem, .75vh, .45rem) clamp(.8rem, 2.5vw, 1.2rem);
+  box-shadow: 0 3px 12px rgba(212,104,138,.18);
+}
+
+.cradle-baby {
+  font-size: clamp(1.1rem, 3.2vh, 1.5rem);
+  display: block;
 }
 
 .baby-name {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(.95rem, 2.8vw, 1.15rem);
+  font-size: clamp(.8rem, 2.2vw, .94rem);
   font-style: italic;
-  color: var(--gold-dk);
+  color: var(--brown);
+  margin-top: .06rem;
 }
 
-/* Pink rule divider */
-.gold-rule {
-  height: 1px;
-  flex-shrink: 0;
-  background: linear-gradient(to right, transparent, var(--gold-lt) 20%, var(--gold) 50%, var(--gold-lt) 80%, transparent);
-}
+/* Hidden in new design — kept so JS references don't break */
+.gold-rule    { display: none; }
+.ornament     { display: none; }
+.inv-baby     { display: none; }
+.baby-lg      { display: none; }
 
 /* Event details */
 .inv-details {
   flex-shrink: 0;
-  padding: clamp(.55rem, 1.8vh, 1rem) clamp(.9rem, 3vw, 1.5rem);
+  padding: clamp(.36rem, 1.05vh, .62rem) clamp(.9rem, 3vw, 1.5rem);
+  border-top: 1px solid var(--gold-lt);
 }
 
 .detail {
   display: flex;
   align-items: flex-start;
-  gap: .7rem;
-  margin-bottom: clamp(.35rem, 1.1vh, .65rem);
+  gap: .6rem;
+  margin-bottom: clamp(.24rem, .72vh, .42rem);
 }
 .detail:last-child { margin-bottom: 0; }
 
 .d-icon {
-  font-size: clamp(1rem, 2.8vw, 1.2rem);
-  width: 1.6rem;
+  font-size: clamp(.86rem, 2.2vw, .98rem);
+  width: 1.3rem;
   flex-shrink: 0;
-  margin-top: .05rem;
+  margin-top: .1rem;
 }
 
 .d-label {
-  font-size: clamp(.58rem, 1.5vw, .68rem);
+  font-size: clamp(.55rem, 1.42vw, .64rem);
   text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--brown-lt);
-  margin-bottom: .08rem;
+  letter-spacing: .14em;
+  color: var(--gold-dk);
+  font-weight: 600;
+  margin-bottom: .03rem;
 }
 
 .d-value {
-  font-size: clamp(.8rem, 2.3vw, .95rem);
+  font-size: clamp(.74rem, 2vw, .86rem);
   font-weight: 500;
   color: var(--brown);
-  line-height: 1.35;
+  line-height: 1.3;
+}
+
+/* Host signature */
+.host-sign {
+  flex-shrink: 0;
+  text-align: center;
+  padding: clamp(.26rem, .75vh, .42rem) 1.4rem clamp(.26rem, .75vh, .42rem);
+  border-top: 1px solid var(--gold-lt);
+}
+
+.with-love {
+  font-size: clamp(.58rem, 1.55vw, .7rem);
+  color: var(--brown-lt);
+  margin: clamp(.1rem, .28vh, .16rem) 0 .05rem;
+}
+
+.host-names {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(.88rem, 2.6vw, 1.12rem);
+  font-style: italic;
+  color: var(--gold-dk);
 }
 
 /* Countdown */
@@ -340,7 +416,7 @@ body {
   background: var(--pink-xl);
   border-top: 1px solid var(--gold-lt);
   border-bottom: 1px solid var(--gold-lt);
-  padding: clamp(.45rem, 1.4vh, .8rem) .5rem;
+  padding: clamp(.36rem, 1.05vh, .58rem) .5rem;
 }
 
 .countdown {
@@ -354,40 +430,40 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: clamp(44px, 12vw, 58px);
+  min-width: clamp(40px, 10.5vw, 52px);
 }
 
 .cd-num {
   font-family: 'Playfair Display', serif;
-  font-size: clamp(1.35rem, 4.5vw, 1.9rem);
+  font-size: clamp(1.2rem, 3.8vw, 1.6rem);
   font-weight: 600;
   color: var(--brown);
   line-height: 1;
 }
 
 .cd-lbl {
-  font-size: clamp(.52rem, 1.4vw, .62rem);
+  font-size: clamp(.48rem, 1.28vw, .57rem);
   text-transform: uppercase;
   letter-spacing: .08em;
   color: var(--brown-lt);
-  margin-top: .2rem;
+  margin-top: .15rem;
 }
 
 .cd-sep {
-  font-size: clamp(1.4rem, 4vw, 1.7rem);
+  font-size: clamp(1.2rem, 3.5vw, 1.5rem);
   color: var(--gold);
   font-weight: 700;
   line-height: 1.05;
-  padding: 0 .05rem;
+  padding: 0 .04rem;
 }
 
 /* Action row */
 .action-row {
   flex-shrink: 0;
   display: flex;
-  gap: .6rem;
+  gap: .45rem;
   justify-content: center;
-  padding: clamp(.5rem, 1.6vh, .9rem) 1.2rem;
+  padding: clamp(.38rem, 1.12vh, .62rem) 1rem clamp(.26rem, .75vh, .4rem);
   flex-wrap: wrap;
 }
 
@@ -399,9 +475,9 @@ body {
   border: 1.5px solid var(--gold);
   color: var(--brown);
   font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
-  font-size: clamp(.75rem, 2.1vw, .85rem);
+  font-size: clamp(.68rem, 1.85vw, .78rem);
   font-weight: 500;
-  padding: .48rem 1rem;
+  padding: .36rem .82rem;
   border-radius: 50px;
   cursor: pointer;
   text-decoration: none;
@@ -419,7 +495,7 @@ body {
 /* RSVP */
 .rsvp-section {
   flex-shrink: 0;
-  padding: clamp(.55rem, 1.8vh, 1rem) 1.2rem;
+  padding: clamp(.26rem, .75vh, .42rem) 1.2rem clamp(.3rem, .88vh, .48rem);
   text-align: center;
   border-top: 1px solid var(--gold-lt);
 }
@@ -429,14 +505,14 @@ body {
   color: var(--white);
   border: none;
   font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
-  font-size: clamp(.85rem, 2.4vw, .98rem);
+  font-size: clamp(.78rem, 2.1vw, .9rem);
   font-weight: 600;
   letter-spacing: .13em;
   text-transform: uppercase;
-  padding: clamp(.65rem, 2vh, .88rem) 2.6rem;
+  padding: clamp(.5rem, 1.5vh, .7rem) 2.1rem;
   border-radius: 50px;
   cursor: pointer;
-  min-width: 160px;
+  min-width: 140px;
   transition: all .3s var(--ease);
   animation: pulseShadow 2.2s ease-in-out infinite;
 }
@@ -445,23 +521,23 @@ body {
   background: var(--brown-lt);
   animation: none;
   cursor: default;
-  font-size: .85rem;
+  font-size: .78rem;
   letter-spacing: .04em;
   min-width: auto;
-  padding: .75rem 1.6rem;
+  padding: .62rem 1.3rem;
 }
 
 .rsvp-status {
-  margin-top: .5rem;
-  font-size: clamp(.75rem, 2vw, .86rem);
+  margin-top: .36rem;
+  font-size: clamp(.68rem, 1.8vw, .78rem);
   color: var(--brown-md);
-  min-height: 1.2rem;
+  min-height: .95rem;
 }
 
 /* Invitation footer */
 .inv-footer {
   flex-shrink: 0;
-  padding: clamp(.45rem, 1.4vh, .75rem);
+  padding: clamp(.26rem, .75vh, .42rem);
   text-align: center;
   background: var(--pink-xl);
   border-top: 1px solid var(--gold-lt);
@@ -472,8 +548,8 @@ body {
   border: 1px solid var(--gold-lt);
   color: var(--brown-md);
   font-family: 'Poppins', 'Noto Sans Devanagari', sans-serif;
-  font-size: .82rem;
-  padding: .36rem .9rem;
+  font-size: .74rem;
+  padding: .26rem .72rem;
   border-radius: 20px;
   cursor: pointer;
   transition: all .2s;

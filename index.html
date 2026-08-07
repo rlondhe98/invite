@@ -58,44 +58,65 @@
     <div class="inv-wrap">
       <article class="inv-card">
 
-        <!-- Header -->
+        <!-- Floral corner decorations -->
+        <span class="corner corner-tl" aria-hidden="true">🌸</span>
+        <span class="corner corner-tr" aria-hidden="true">🌸</span>
+        <span class="corner corner-bl" aria-hidden="true">🌸</span>
+        <span class="corner corner-br" aria-hidden="true">🌸</span>
+
+        <!-- Ganesh header -->
         <header class="inv-header">
-          <p class="ornament" aria-hidden="true">❦ ✿ ❦</p>
-          <p class="inv-tag" id="ev-invited-by">You are cordially invited to the</p>
-          <h1 class="inv-title" id="ev-title">Naming Ceremony</h1>
-          <div class="inv-baby">
-            <span class="baby-lg" id="hero-emoji" aria-hidden="true"></span>
-            <p class="baby-name" id="baby-name"></p>
-          </div>
-          <p class="ornament" aria-hidden="true">❦ ✿ ❦</p>
+          <span class="ganesh-icon" aria-hidden="true">🕉</span>
+          <p class="ganesh-mantra" id="ev-mantra">॥ श्री गणेशाय नम: ॥</p>
+          <div class="mantra-rule" role="separator"></div>
         </header>
 
-        <div class="gold-rule" role="separator"></div>
+        <!-- Invitation body: tag · lotus · title · cradle · subtitle -->
+        <div class="inv-body">
+          <p class="inv-tag" id="ev-invited-by"></p>
+          <p class="lotus-div" aria-hidden="true">〰 🪷 〰</p>
+          <h1 class="inv-title" id="ev-title">NAMING CEREMONY</h1>
+          <div class="baby-cradle-wrap">
+            <span class="cradle-bell" aria-hidden="true">🔔</span>
+            <div class="cradle-box">
+              <span class="cradle-baby" id="hero-emoji" aria-hidden="true"></span>
+            </div>
+          </div>
+          <p class="baby-name" id="baby-name"></p>
+          <p class="heart-div" aria-hidden="true">— ♥ —</p>
+        </div>
 
-        <!-- Event details -->
+        <!-- Event details: Date → Venue → Time (physical card order) -->
         <section class="inv-details" aria-label="Event details">
           <div class="detail">
             <span class="d-icon" aria-hidden="true">📅</span>
             <div>
-              <p class="d-label" data-i18n="date">Date</p>
+              <p class="d-label" data-i18n="date">DATE</p>
               <p class="d-value" id="ev-date"></p>
-            </div>
-          </div>
-          <div class="detail">
-            <span class="d-icon" aria-hidden="true">🕐</span>
-            <div>
-              <p class="d-label" data-i18n="time">Time</p>
-              <p class="d-value" id="ev-time"></p>
             </div>
           </div>
           <div class="detail">
             <span class="d-icon" aria-hidden="true">📍</span>
             <div>
-              <p class="d-label" data-i18n="venue">Venue</p>
+              <p class="d-label" data-i18n="venue">VENUE</p>
               <p class="d-value" id="ev-venue"></p>
             </div>
           </div>
+          <div class="detail">
+            <span class="d-icon" aria-hidden="true">🕐</span>
+            <div>
+              <p class="d-label" data-i18n="time">TIME</p>
+              <p class="d-value" id="ev-time"></p>
+            </div>
+          </div>
         </section>
+
+        <!-- Host signature -->
+        <div class="host-sign">
+          <p class="lotus-div" aria-hidden="true">〰 🪷 〰</p>
+          <p class="with-love" data-i18n="withLove">With love,</p>
+          <p class="host-names" id="ev-hosts"></p>
+        </div>
 
         <!-- Countdown -->
         <section class="cd-wrap" aria-label="Countdown">

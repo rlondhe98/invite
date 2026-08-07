@@ -14,16 +14,16 @@ const CONFIG = {
   eventNameEn: 'Naming Ceremony',
   eventNameMr: 'नामकरण सोहळा',
 
-  invitedByEn: 'You are cordially invited to the',
-  invitedByMr: 'आपण आमंत्रित आहात',
+  invitedByEn: 'With heart full of joy,\nwe warmly welcome you for the',
+  invitedByMr: 'आनंदाने आपले सहर्ष\nस्वागत आहे',
 
   // Central emoji on splash screen and invitation card
   // 👶 naming  |  🎂 birthday  |  💒 wedding  |  💍 engagement  |  🎓 graduation
   splashEmoji: '👶',
 
   // Subject line below the emoji (shown before reveal)
-  honorTitleEn: 'Our Little Princess',
-  honorTitleMr: 'आमची लाडकी राजकन्या',
+  honorTitleEn: 'of our beloved Baby Girl',
+  honorTitleMr: 'आमच्या लाडक्या बाळाचे',
 
   // ── Reveal ─────────────────────────────────────────────────────
   // Set revealName: false to show honorTitle.
@@ -31,11 +31,18 @@ const CONFIG = {
   revealName: false,
   revealText: 'Meet Avani Siddhi Rohan Londhe ❤️',
 
+  // Hosts shown in the signature at the bottom of the card
+  hostNamesEn:  'Siddhi & Rohan',
+  hostNamesMr:  'सिद्धी आणि रोहन',
+
+  // Sanskrit invocation at top of card — set '' to hide for non-religious events
+  ganeshMantra: '॥ श्री गणेशाय नम: ॥',
+
   // ── Event details ──────────────────────────────────────────────
   eventDateDisplay: 'Sunday, 6 September 2026',
-  eventTime:        '11:00 AM – 2:00 PM',
-  venueName:        'Hitavardhani Sabha',
-  venueAddress:     'Shivaji Nagar, Thane West 400602',
+  eventTime:        '11:00 AM onwards',
+  venueName:        'Hithavardhani Sabha Hall',
+  venueAddress:     'Shivaji Nagar, Thane West',
   eventISO:         '2026-09-06T11:00:00',
 
   // ── Links & contact ────────────────────────────────────────────
