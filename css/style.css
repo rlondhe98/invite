@@ -570,6 +570,16 @@ body {
   background: rgba(168,76,76,.07);
   transform: translateX(4px);
 }
+.choice-cancel {
+  opacity: .7;
+  border-style: dashed;
+}
+.choice-cancel:hover, .choice-cancel:active {
+  border-color: #888;
+  background: rgba(0,0,0,.04);
+  opacity: 1;
+  transform: translateX(4px);
+}
 
 /* Headcount stepper */
 .headcount {

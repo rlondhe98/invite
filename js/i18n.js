@@ -40,6 +40,11 @@ const I18n = {
       coming:           'Coming',
       notComing:        'Not Coming',
       alreadyRsvp:      'RSVP Submitted ✓',
+      updateRsvp:       'Update RSVP',
+      cancelRsvp:       'Cancel my RSVP',
+      cancelRsvpConfirm:'Remove your RSVP? You can always re-submit.',
+      cancelled:        'Cancelled',
+      thankYouCancelled:'Your RSVP has been removed. We hope to see you soon!',
     },
     mr: {
       loading:          'लोड होत आहे…',
@@ -74,6 +79,11 @@ const I18n = {
       coming:           'येत आहे',
       notComing:        'येत नाही',
       alreadyRsvp:      'उपस्थिती नोंदवली ✓',
+      updateRsvp:       'उपस्थिती बदला',
+      cancelRsvp:       'उपस्थिती रद्द करा',
+      cancelRsvpConfirm:'उपस्थिती रद्द करायची आहे का?',
+      cancelled:        'रद्द केली',
+      thankYouCancelled:'आपली उपस्थिती रद्द केली. लवकरच भेटू!',
     },
   },
 

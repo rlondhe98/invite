@@ -94,17 +94,18 @@ const App = {
     const btn    = document.getElementById('btn-rsvp');
     const status = document.getElementById('rsvp-status');
 
-    if (this.guest && this.guest.status !== 'Pending') {
-      const icon  = this.guest.status === 'Coming' ? '✅' : '❌';
-      const label = this.guest.status === 'Coming' ? I18n.t('coming') : I18n.t('notComing');
+    if (this.guest && this.guest.status && this.guest.status !== 'Pending') {
+      const icons  = { Coming: '✅', 'Not Coming': '❌', Cancelled: '🚫' };
+      const labelK = { Coming: 'coming', 'Not Coming': 'notComing', Cancelled: 'cancelled' };
+      const icon   = icons[this.guest.status] || 'ℹ️';
+      const label  = I18n.t(labelK[this.guest.status] || this.guest.status);
       status.textContent = `${icon} ${I18n.t('status')}: ${label}`;
-      btn.disabled = true;
-      btn.innerHTML = `<span data-i18n="alreadyRsvp">${I18n.t('alreadyRsvp')}</span>`;
+      btn.innerHTML = `<span>${I18n.t('updateRsvp')}</span>`;
     } else {
       status.textContent = '';
-      btn.disabled = false;
-      btn.innerHTML = `<span data-i18n="rsvpButton">${I18n.t('rsvpButton')}</span>`;
+      btn.innerHTML = `<span>${I18n.t('rsvpButton')}</span>`;
     }
+    btn.disabled = false;
   },
 
   _startCountdown() {
@@ -134,10 +135,20 @@ const App = {
       return;
     }
 
-    // Reset to initial state
-    this.counts = { adults: 1, kids: 0 };
-    document.getElementById('val-adults').textContent = '1';
-    document.getElementById('val-kids').textContent   = '0';
+    // Pre-fill with existing headcount when updating
+    this.counts = {
+      adults: this.guest.adults > 0 ? this.guest.adults : 1,
+      kids:   this.guest.kids   > 0 ? this.guest.kids   : 0,
+    };
+    document.getElementById('val-adults').textContent = this.counts.adults;
+    document.getElementById('val-kids').textContent   = this.counts.kids;
+
+    // Show "Cancel RSVP" only when an active response already exists
+    const cancelBtn = document.getElementById('btn-cancel-rsvp');
+    if (cancelBtn) {
+      const canCancel = this.guest.status === 'Coming' || this.guest.status === 'Not Coming';
+      cancelBtn.classList.toggle('hidden', !canCancel);
+    }
 
     document.getElementById('step-choice').classList.remove('hidden');
     document.getElementById('step-count').classList.add('hidden');
@@ -155,6 +166,11 @@ const App = {
 
   async pickNo() {
     await this._submit('Not Coming', 0, 0);
+  },
+
+  async cancelRsvp() {
+    if (!confirm(I18n.t('cancelRsvpConfirm'))) return;
+    await this._submit('Cancelled', 0, 0);
   },
 
   inc(type) {
@@ -213,6 +229,9 @@ const App = {
         `<p>📅 ${CONFIG.eventDateDisplay}</p>` +
         `<p>⏰ ${CONFIG.eventTime}</p>` +
         `<p>📍 ${CONFIG.venueName}</p>`;
+    } else if (status === 'Cancelled') {
+      msg.textContent = I18n.t('thankYouCancelled');
+      sum.innerHTML   = '';
     } else {
       msg.textContent = I18n.t('thankYouDeclined');
       sum.innerHTML   = '';
