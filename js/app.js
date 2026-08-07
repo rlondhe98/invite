@@ -54,7 +54,7 @@ const App = {
     if (!el || !this.guest) return;
     el.textContent = this.lang === 'mr'
       ? `${this.guest.family}`
-      : `Welcome, ${this.guest.family}!`;
+      : `${this.guest.family}!`;
   },
 
   // ── Screen management ────────────────────────────────────

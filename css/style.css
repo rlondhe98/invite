@@ -269,9 +269,11 @@ body {
 }
 
 .ivc-mantra {
-  font-family: 'Noto Sans Devanagari', serif;
-  font-size: clamp(.68rem, 1.9vw, .84rem);
-  font-weight: 700; color: #8B5E08; letter-spacing: .1em;
+  font-family: 'Tiro Devanagari Marathi', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-weight: 700; 
+  color: #8B5E08; 
+  letter-spacing: .1em;
 }
 .ivc-ornament-row {
   display: flex; align-items: center; gap: .35rem;
@@ -285,23 +287,32 @@ body {
 .ivc-star { font-size: .65rem; }
 .ivc-host-row { width: 48%; }
 .ivc-invite {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(.6rem, 1.65vw, .74rem);
-  font-style: italic; color: rgba(107,20,40,.7);
-  line-height: 1.55; white-space: pre-line;
+  font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif;
+  font-size: clamp(0.9rem, 1.8vw, 1.2rem); /* Scaled up from .6rem-.74rem */
+  font-style: italic; 
+  color: rgba(107, 20, 40, 0.75); /* Slightly increased opacity for better contrast */
+  line-height: 1.6; 
+  white-space: pre-line;
 }
 .ivc-title {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(1.05rem, 4.8vw, 1.58rem);
-  font-weight: 700; text-transform: uppercase;
-  letter-spacing: .11em; color: #6B1428;
-  text-shadow: 0 2px 18px rgba(107,20,40,.12);
-  line-height: 1.1; margin: .08rem 0;
+  /* Playfair Display for English, Tiro Devanagari Marathi for Marathi */
+  font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif;
+  font-size: clamp(1.5rem, 5vw, 2.5rem); 
+  font-weight: 700; 
+  color: #6B1428;
+  text-shadow: 0 2px 18px rgba(107, 20, 40, 0.12);
+  line-height: 1.2; 
+  margin: 0.4rem 0; 
+  
+  /* 1. RESET defaults here so Marathi stays connected and normal case */
+  letter-spacing: 0;
+  text-transform: none;
 }
 .ivc-sub {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(.76rem, 2.1vw, .9rem);
-  font-style: italic; color: rgba(139,42,66,.82);
+  font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif;
+  font-size: clamp(1rem, 2.2vw, 1.35rem); /* Scaled up from .76rem-.9rem */
+  font-style: italic; 
+  color: rgba(139, 42, 66, 0.9); /* Increased opacity for clarity */
 }
 
 /* ─ Reveal celebration ───────────────────────────── */
@@ -348,9 +359,11 @@ body {
 }
 
 .ivc-hosts {
-  font-family: 'Noto Sans Devanagari', 'Playfair Display', serif;
-  font-size: clamp(.72rem, 2vw, .86rem);
-  font-weight: 600; font-style: italic; color: #B8860C;
+  font-family: 'Playfair Display', 'Tiro Devanagari Marathi', serif; /* Removed Devanagari since names are in Latin script */
+  font-size: clamp(1.1rem, 2.4vw, 1.5rem); /* Scaled up from .72rem-.86rem */
+  font-weight: 700; /* Bumped to 700 to make the elegant font pop */
+  font-style: italic; 
+  color: #B8860C;
 }
 /* Gradient bleed into details panel */
 .inv-card-fade {
