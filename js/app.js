@@ -65,6 +65,7 @@ const App = {
 
   // ── Invitation screen ────────────────────────────────────
   showInvitation() {
+    this._stopBubbleSimulation();
     this._fillInvite();
     this._startCountdown();
     this._show('invitation');
@@ -152,6 +153,7 @@ const App = {
 
   // ── RSVP form ────────────────────────────────────────────
   showRsvp() {
+    this._stopBubbleSimulation();
     if (!this.guest) {
       alert('Please use your personalized link from WhatsApp.');
       return;
@@ -263,6 +265,7 @@ const App = {
   },
   // ── Name-guess screen ─────────────────────────────────────────
   showNameGuess() {
+    this._stopBubbleSimulation();
     const titleEl = document.getElementById('ng-title');
     const hintEl  = document.getElementById('ng-hint');
     if (titleEl) titleEl.textContent = this.lang === 'mr'
@@ -294,7 +297,7 @@ const App = {
 
   async showBubbles() {
     this._show('bubbles');
-    if (this._bubbleSim) { this._bubbleSim.stop(); this._bubbleSim = null; }
+    this._stopBubbleSimulation();
     const scene = document.getElementById('bub-scene');
     if (!scene) return;
     scene.innerHTML = '<div class="bub-msg">🪻 Loading…</div>';
@@ -319,6 +322,14 @@ const App = {
   },
 
   refreshBubbles() { this.showBubbles(); },
+
+  _stopBubbleSimulation() {
+    if (this._bubbleSim) {
+      this._bubbleSim.stop();
+      this._bubbleSim = null;
+    }
+  },
+
   // ── Apply CONFIG.theme as CSS custom properties ────────────────
   _applyTheme() {
     const s = document.documentElement.style;
@@ -348,16 +359,22 @@ class BubbleSimulation {
     this.guesses   = guesses;
     this.bubbles   = [];
     this._raf      = null;
+    this._frame    = 0;
+    this._maxFrames = 0;
   }
 
   start() {
     const W = this.container.clientWidth  || 320;
     const H = this.container.clientHeight || 400;
     const maxCount = Math.max(...this.guesses.map(g => g.count), 1);
-    const minR = 30, maxR = Math.min(W, H) * 0.22;
+    const weights = this.guesses.map(g => 0.55 + 0.45 * Math.sqrt(g.count / maxCount));
+    const usableArea = W * H * 0.52;
+    const unitRadius = Math.sqrt(usableArea / (Math.PI * weights.reduce((sum, weight) => sum + weight, 0)));
+    const largestRadius = Math.min(W, H) * 0.22;
+    this._maxFrames = Math.min(300, 120 + this.guesses.length * 6);
 
     this.guesses.forEach((g, i) => {
-      const r   = minR + (g.count / maxCount) * (maxR - minR);
+      const r   = Math.min(largestRadius, Math.max(16, unitRadius * weights[i]));
       const col = BubbleSimulation.COLORS[i % BubbleSimulation.COLORS.length];
       const x   = r + Math.random() * Math.max(W - 2 * r, 1);
       const y   = r + Math.random() * Math.max(H - 2 * r, 1);
@@ -369,8 +386,10 @@ class BubbleSimulation {
       el.style.cssText = [
         `left:${x - r}px`, `top:${y - r}px`,
         `width:${r * 2}px`, `height:${r * 2}px`,
-        `background:radial-gradient(circle at 35% 35%, ${col[0]}, ${col[1]})`,
-        `box-shadow:0 0 ${Math.round(r * 0.4)}px rgba(0,0,0,.28),inset 0 -4px 12px rgba(255,255,255,.18)`,
+        `background:radial-gradient(circle at 35% 28%, ${col[0]} 0%, ${col[1]} 100%)`,
+        `box-shadow:0 0 ${Math.round(r * 0.35)}px rgba(0,0,0,.32),inset 0 -5px 14px rgba(0,0,0,.2)`,
+        `--bubble-name-size:${Math.max(9, Math.min(15, r * 0.32))}px`,
+        `--bubble-count-size:${Math.max(8, Math.min(12, r * 0.23))}px`,
       ].join(';');
       el.innerHTML =
         `<span class="b-name">${g.name}</span><span class="b-count">${g.count}</span>`;
@@ -379,6 +398,7 @@ class BubbleSimulation {
       this.bubbles.push({ el, x, y, r, vx, vy });
     });
 
+    this._frame = 0;
     this._tick();
   }
 
@@ -398,7 +418,7 @@ class BubbleSimulation {
         const d  = Math.sqrt(dx * dx + dy * dy) || 1;
         const mn = b.r + o.r + 8;
         if (d < mn) {
-          const f = (mn - d) / d * 0.05;
+          const f = (mn - d) / d * 0.1;
           b.vx += dx * f; b.vy += dy * f;
           o.vx -= dx * f; o.vy -= dy * f;
         }
@@ -409,12 +429,18 @@ class BubbleSimulation {
       if (b.y - b.r < 0)  { b.y = b.r;      b.vy =  Math.abs(b.vy) * 0.7; }
       if (b.y + b.r > H)  { b.y = H - b.r;  b.vy = -Math.abs(b.vy) * 0.7; }
 
-      b.vx *= 0.984; b.vy *= 0.984;
+      b.vx = Math.max(-2, Math.min(2, b.vx * 0.976));
+      b.vy = Math.max(-2, Math.min(2, b.vy * 0.976));
       b.x  += b.vx;  b.y  += b.vy;
       b.el.style.left = `${b.x - b.r}px`;
       b.el.style.top  = `${b.y - b.r}px`;
     }
-    this._raf = requestAnimationFrame(() => this._tick());
+    this._frame++;
+    if (this._frame < this._maxFrames) {
+      this._raf = requestAnimationFrame(() => this._tick());
+    } else {
+      this._raf = null;
+    }
   }
 
   stop() {
