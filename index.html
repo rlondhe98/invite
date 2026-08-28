@@ -300,9 +300,9 @@
   <!-- ═══════════════════════════════════
        OVERLAY — Dramatic Name Reveal
   ════════════════════════════════════ -->
-  <div id="reveal-overlay" class="reveal-overlay hidden" onclick="App.dismissReveal()">
+  <div id="reveal-overlay" class="reveal-overlay hidden">
     <canvas id="reveal-canvas"></canvas>
-    <div class="reveal-tap" id="reveal-tap" data-i18n="tapToContinue">Tap to continue</div>
+    <button class="reveal-skip" id="reveal-skip" onclick="App.dismissReveal()">Skip ▸</button>
   </div>
 
   <noscript>
