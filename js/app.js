@@ -392,6 +392,7 @@ class RevealAudio {
     this._audio = new Audio('audio/reveal-theme.mp3');
     this._audio.loop = false;
     this._audio.volume = 1;
+    this._stopped = false;
   }
 
   startCosmicDrone() { this._audio.currentTime = 0; this._audio.play().catch(() => {}); }
@@ -402,7 +403,9 @@ class RevealAudio {
 
   startViolinFade() {
     const a = this._audio;
+    const self = this;
     const fade = () => {
+      if (self._stopped) return;
       if (a.volume > 0.02) { a.volume = Math.max(0, a.volume - 0.015); requestAnimationFrame(fade); }
       else { a.volume = 0; a.pause(); }
     };
@@ -410,7 +413,8 @@ class RevealAudio {
   }
 
   stop() {
-    try { this._audio.pause(); this._audio.currentTime = 0; } catch (_) {}
+    this._stopped = true;
+    try { this._audio.pause(); this._audio.currentTime = 0; this._audio.src = ''; } catch (_) {}
   }
 }
 
