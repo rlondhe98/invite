@@ -343,17 +343,17 @@ const App = {
   _showRevealOverlay() {
     const overlay = document.getElementById('reveal-overlay');
     const canvas  = document.getElementById('reveal-canvas');
-    const tapEl   = document.getElementById('reveal-tap');
+    const skipBtn = document.getElementById('reveal-skip');
     if (!overlay || !canvas) return;
 
-    if (tapEl) tapEl.classList.remove('show');
+    if (skipBtn) skipBtn.classList.remove('show');
     overlay.classList.remove('hidden', 'dismissing');
 
     requestAnimationFrame(() => {
       const audio = new RevealAudio();
       this._reveal = new EndgameReveal(canvas, audio);
       const heroName = (CONFIG.revealHeroName || '').toUpperCase();
-      this._reveal.start(heroName, tapEl);
+      this._reveal.start(heroName, skipBtn);
     });
   },
 
@@ -365,8 +365,8 @@ const App = {
     setTimeout(() => {
       overlay.classList.add('hidden');
       overlay.classList.remove('dismissing');
-      const tap = document.getElementById('reveal-tap');
-      if (tap) tap.classList.remove('show');
+      const skip = document.getElementById('reveal-skip');
+      if (skip) skip.classList.remove('show');
     }, 600);
   },
 
@@ -457,45 +457,44 @@ class EndgameReveal {
     this.tapEl = tapEl;
     this.t0 = performance.now() / 1000;
 
-    // ── Phase 1: Cosmic Dust (0-5s) ──
+    // ── Phase 1: Cosmic Dust (0-3s) ──
     this.phase = 1;
     this._spawnCosmicDust(180);
     this.goldSpark = { x: this.W / 2, y: this.H / 2, r: 0, maxR: 3, pulse: 0, growing: false };
     this.audio.startCosmicDrone();
 
-    this._sched(1000, () => {
+    this._sched(500, () => {
       this.narrative = { text: 'The universe expands...', alpha: 0, target: 0.8 };
     });
-    this._sched(2500, () => { if (this.goldSpark) this.goldSpark.growing = true; });
+    this._sched(1500, () => { if (this.goldSpark) this.goldSpark.growing = true; });
 
-    // ── Phase 2: Assembly (5-12s) ──
-    this._sched(5000, () => {
+    // ── Phase 2: Assembly (3-7s) ──
+    this._sched(3000, () => {
       this.phase = 2;
       this.narrative = { text: '...to welcome a new force.', alpha: 0, target: 0.8 };
       this._blueExplosion(this.W / 2, this.H / 2, 120);
       this.goldSpark = null;
       this.audio.startDrumMarch();
     });
-    // Continuous forward-rush particles
-    for (let i = 0; i < 30; i++) {
-      this._sched(5500 + i * 200, () => {
+    for (let i = 0; i < 20; i++) {
+      this._sched(3400 + i * 180, () => {
         if (this.phase === 2) this._blueExplosion(this.W / 2, this.H / 2, 6);
       });
     }
 
-    // ── Phase 3: Cinematic Cuts (12-22s) ──
-    this._sched(11500, () => { this.narrative = null; });
+    // ── Phase 3: Cinematic Cuts (7-15s) ──
+    this._sched(6500, () => { this.narrative = null; });
 
-    this._sched(12000, () => {
+    this._sched(7000, () => {
       this.phase = 3;
       this.particles = this.particles.filter(p => p.type === 'cosmic');
       this._flash(0.9);
       this.audio.cutImpact(0);
       this.audio.startStringsCrescendo();
-      this._flyLetter(heroName[0] || 'A', -this.W * 0.3, this.H / 2, this.W * 1.3, this.H / 2, 2.0);
+      this._flyLetter(heroName[0] || 'A', -this.W * 0.3, this.H / 2, this.W * 1.3, this.H / 2, 1.5);
     });
 
-    this._sched(14500, () => {
+    this._sched(9000, () => {
       this._flash(0.9);
       this.audio.cutImpact(1);
       const cx = this.W / 2, cy = this.H / 2;
@@ -506,7 +505,7 @@ class EndgameReveal {
       this._flyLetter(c2, this.W * 1.3, cy, cx + 80, cy, 1.0);
     });
 
-    this._sched(17500, () => {
+    this._sched(11500, () => {
       this._flash(0.7);
       this.audio.cutImpact(2);
       const cx = this.W / 2, cy = this.H / 2;
@@ -515,10 +514,10 @@ class EndgameReveal {
       this._flyLetter(c4, cx + 60, this.H + 200, cx + 60, cy, 1.5);
     });
 
-    this._sched(20500, () => { this.letterAnims = []; });
+    this._sched(14000, () => { this.letterAnims = []; });
 
-    // ── Phase 4: Climax Reveal (22-30s) ──
-    this._sched(22000, () => {
+    // ── Phase 4: Climax Reveal (15-23s) ──
+    this._sched(15000, () => {
       this.phase = 4;
       this.particles = this.particles.filter(p => p.type === 'cosmic');
       this._flash(1.0);
@@ -537,15 +536,17 @@ class EndgameReveal {
       };
     });
 
-    // ── Phase 5: Ash Fade (30-35s) ──
-    this._sched(30000, () => {
+    // ── Phase 5: Ash Fade (23-28s) ──
+    this._sched(23000, () => {
       this.phase = 5;
       this.audio.startViolinFade();
       if (this.hero) this.hero.dissolving = true;
       this._spawnAsh();
     });
 
-    this._sched(33000, () => { if (this.tapEl) this.tapEl.classList.add('show'); });
+    // Show skip button early, auto-dismiss when sequence ends
+    this._sched(2000, () => { if (this.tapEl) this.tapEl.classList.add('show'); });
+    this._sched(28000, () => { App.dismissReveal(); });
 
     this._tick();
   }
