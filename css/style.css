@@ -969,20 +969,21 @@ body {
 }
 
 .reveal-skip {
-  position: absolute; top: 2.5vh; right: 3vw;
-  z-index: 2;
+  position: absolute; top: 2vh; right: 3vw;
+  z-index: 10;
   font-family: 'Poppins', sans-serif;
-  font-size: clamp(.7rem, 2vw, .85rem);
-  color: rgba(232,212,176,.7);
-  background: rgba(232,212,176,.1);
-  border: 1px solid rgba(232,212,176,.25);
+  font-size: clamp(.85rem, 3vw, 1rem);
+  color: rgba(232,212,176,.85);
+  background: rgba(232,212,176,.15);
+  border: 1px solid rgba(232,212,176,.3);
   border-radius: 2rem;
-  padding: .4em 1.4em;
+  padding: .6em 1.6em;
   letter-spacing: .12em;
   text-transform: uppercase;
   cursor: pointer;
   opacity: 0; pointer-events: none;
   transition: opacity .4s ease, background .2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .reveal-skip.show {
   opacity: 1; pointer-events: auto;
