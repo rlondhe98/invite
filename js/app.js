@@ -71,6 +71,11 @@ const App = {
     this._show('invitation');
     const scr = document.querySelector('#screen-invitation .inv-scroll');
     if (scr) scr.scrollTop = 0;
+
+    if (CONFIG.revealName && !this._revealShown) {
+      this._revealShown = true;
+      this._showRevealOverlay();
+    }
   },
 
   _fillInvite() {
@@ -330,6 +335,37 @@ const App = {
     }
   },
 
+  // ── Endgame cinematic name-reveal overlay ────────────────────
+  _showRevealOverlay() {
+    const overlay = document.getElementById('reveal-overlay');
+    const canvas  = document.getElementById('reveal-canvas');
+    const tapEl   = document.getElementById('reveal-tap');
+    if (!overlay || !canvas) return;
+
+    if (tapEl) tapEl.classList.remove('show');
+    overlay.classList.remove('hidden', 'dismissing');
+
+    requestAnimationFrame(() => {
+      const audio = new RevealAudio();
+      this._reveal = new EndgameReveal(canvas, audio);
+      const heroName = (CONFIG.revealHeroName || '').toUpperCase();
+      this._reveal.start(heroName, tapEl);
+    });
+  },
+
+  dismissReveal() {
+    const overlay = document.getElementById('reveal-overlay');
+    if (!overlay || overlay.classList.contains('hidden')) return;
+    overlay.classList.add('dismissing');
+    if (this._reveal) { this._reveal.stop(); this._reveal = null; }
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('dismissing');
+      const tap = document.getElementById('reveal-tap');
+      if (tap) tap.classList.remove('show');
+    }, 600);
+  },
+
   // ── Apply CONFIG.theme as CSS custom properties ────────────────
   _applyTheme() {
     const s = document.documentElement.style;
@@ -345,6 +381,511 @@ const App = {
     s.setProperty('--brown',     t.text);
   },
 };
+
+// ── Reveal Audio (MP3 playback) ─────────────────────────────────────────────
+class RevealAudio {
+  constructor() {
+    this._audio = new Audio('audio/reveal-theme.mp3');
+    this._audio.loop = false;
+    this._audio.volume = 1;
+  }
+
+  startCosmicDrone() { this._audio.currentTime = 0; this._audio.play().catch(() => {}); }
+  startDrumMarch() {}
+  cutImpact() {}
+  startStringsCrescendo() {}
+  avengersBlast() {}
+
+  startViolinFade() {
+    const a = this._audio;
+    const fade = () => {
+      if (a.volume > 0.02) { a.volume = Math.max(0, a.volume - 0.015); requestAnimationFrame(fade); }
+      else { a.volume = 0; a.pause(); }
+    };
+    fade();
+  }
+
+  stop() {
+    try { this._audio.pause(); this._audio.currentTime = 0; } catch (_) {}
+  }
+}
+
+// ── Endgame Cinematic Reveal ────────────────────────────────────────────────
+class EndgameReveal {
+  constructor(canvas, audio) {
+    this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+    this.audio = audio;
+    this.W = 0; this.H = 0;
+    this.particles = [];
+    this.flashes = [];
+    this.shockwaves = [];
+    this.letterAnims = [];
+    this.narrative = null;
+    this.hero = null;
+    this._raf = null;
+    this._timers = [];
+    this.stopped = false;
+    this.t0 = 0;
+    this.phase = 0;
+    this.goldSpark = null;
+    this._resize();
+    this._onResize = () => this._resize();
+    window.addEventListener('resize', this._onResize);
+  }
+
+  _resize() {
+    const dpr = window.devicePixelRatio || 1;
+    this.W = this.canvas.clientWidth || window.innerWidth;
+    this.H = this.canvas.clientHeight || window.innerHeight;
+    this.canvas.width = this.W * dpr;
+    this.canvas.height = this.H * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  _sched(ms, fn) {
+    if (this.stopped) return;
+    this._timers.push(setTimeout(() => { if (!this.stopped) fn(); }, ms));
+  }
+
+  start(heroName, tapEl) {
+    this.heroName = heroName;
+    this.tapEl = tapEl;
+    this.t0 = performance.now() / 1000;
+
+    // ── Phase 1: Cosmic Dust (0-5s) ──
+    this.phase = 1;
+    this._spawnCosmicDust(180);
+    this.goldSpark = { x: this.W / 2, y: this.H / 2, r: 0, maxR: 3, pulse: 0, growing: false };
+    this.audio.startCosmicDrone();
+
+    this._sched(1000, () => {
+      this.narrative = { text: 'The universe expands...', alpha: 0, target: 0.8 };
+    });
+    this._sched(2500, () => { if (this.goldSpark) this.goldSpark.growing = true; });
+
+    // ── Phase 2: Assembly (5-12s) ──
+    this._sched(5000, () => {
+      this.phase = 2;
+      this.narrative = { text: '...to welcome a new force.', alpha: 0, target: 0.8 };
+      this._blueExplosion(this.W / 2, this.H / 2, 120);
+      this.goldSpark = null;
+      this.audio.startDrumMarch();
+    });
+    // Continuous forward-rush particles
+    for (let i = 0; i < 30; i++) {
+      this._sched(5500 + i * 200, () => {
+        if (this.phase === 2) this._blueExplosion(this.W / 2, this.H / 2, 6);
+      });
+    }
+
+    // ── Phase 3: Cinematic Cuts (12-22s) ──
+    this._sched(11500, () => { this.narrative = null; });
+
+    this._sched(12000, () => {
+      this.phase = 3;
+      this.particles = this.particles.filter(p => p.type === 'cosmic');
+      this._flash(0.9);
+      this.audio.cutImpact(0);
+      this.audio.startStringsCrescendo();
+      this._flyLetter(heroName[0] || 'A', -this.W * 0.3, this.H / 2, this.W * 1.3, this.H / 2, 2.0);
+    });
+
+    this._sched(14500, () => {
+      this._flash(0.9);
+      this.audio.cutImpact(1);
+      const cx = this.W / 2, cy = this.H / 2;
+      const c1 = heroName[1] || 'V', c2 = heroName[2] || 'A';
+      this._flyLetter(c1, -this.W * 0.3, cy, cx - 80, cy, 1.0, () => {
+        this._blueSparkBurst(cx, cy, 60);
+      });
+      this._flyLetter(c2, this.W * 1.3, cy, cx + 80, cy, 1.0);
+    });
+
+    this._sched(17500, () => {
+      this._flash(0.7);
+      this.audio.cutImpact(2);
+      const cx = this.W / 2, cy = this.H / 2;
+      const c3 = heroName[3] || 'N', c4 = heroName[4] || 'I';
+      this._flyLetter(c3, cx - 60, this.H + 200, cx - 60, cy, 1.5);
+      this._flyLetter(c4, cx + 60, this.H + 200, cx + 60, cy, 1.5);
+    });
+
+    this._sched(20500, () => { this.letterAnims = []; });
+
+    // ── Phase 4: Climax Reveal (22-30s) ──
+    this._sched(22000, () => {
+      this.phase = 4;
+      this.particles = this.particles.filter(p => p.type === 'cosmic');
+      this._flash(1.0);
+      this.audio.avengersBlast();
+      this._blueExplosion(this.W / 2, this.H / 2, 80);
+      this.shockwaves.push({
+        x: this.W / 2, y: this.H / 2,
+        r: 0, maxR: Math.max(this.W, this.H) * 0.8,
+        speed: 600, lineWidth: 6, alpha: 1,
+      });
+      this.hero = {
+        text: this.heroName, x: this.W / 2, y: this.H / 2 - 20,
+        scale: 5, targetScale: 1, alpha: 0, targetAlpha: 1,
+        shake: 25, energyPhase: 0,
+        dissolving: false, dissolveAlpha: 1,
+      };
+    });
+
+    // ── Phase 5: Ash Fade (30-35s) ──
+    this._sched(30000, () => {
+      this.phase = 5;
+      this.audio.startViolinFade();
+      if (this.hero) this.hero.dissolving = true;
+      this._spawnAsh();
+    });
+
+    this._sched(33000, () => { if (this.tapEl) this.tapEl.classList.add('show'); });
+
+    this._tick();
+  }
+
+  stop() {
+    this.stopped = true;
+    this._timers.forEach(id => clearTimeout(id));
+    this._timers = [];
+    if (this._raf) { cancelAnimationFrame(this._raf); this._raf = null; }
+    window.removeEventListener('resize', this._onResize);
+    if (this.audio) { this.audio.stop(); this.audio = null; }
+  }
+
+  // ── Particle Spawners ──
+
+  _spawnCosmicDust(count) {
+    for (let i = 0; i < count; i++) {
+      this.particles.push({
+        type: 'cosmic',
+        x: Math.random() * this.W, y: Math.random() * this.H,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.2,
+        size: 0.5 + Math.random() * 2.5, life: 1, decay: 0,
+        alpha: 0.1 + Math.random() * 0.4,
+        hue: Math.random() > 0.5 ? 35 + Math.random() * 20 : 345 + Math.random() * 20,
+      });
+    }
+  }
+
+  _blueExplosion(x, y, count) {
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const s = 2 + Math.random() * 7;
+      this.particles.push({
+        type: 'energy', x, y,
+        vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+        size: 1 + Math.random() * 3, life: 1,
+        decay: 0.004 + Math.random() * 0.008,
+        alpha: 0.8, hue: 35 + Math.random() * 20,
+      });
+    }
+  }
+
+  _blueSparkBurst(x, y, count) {
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2;
+      const s = 4 + Math.random() * 10;
+      this.particles.push({
+        type: 'spark', x, y,
+        vx: Math.cos(a) * s, vy: Math.sin(a) * s,
+        size: 0.5 + Math.random() * 2, life: 1,
+        decay: 0.02 + Math.random() * 0.03,
+        alpha: 1, hue: 30 + Math.random() * 25,
+      });
+    }
+  }
+
+  _spawnAsh() {
+    if (!this.hero) return;
+    const fs = this._heroFontSize();
+    this.ctx.font = '900 ' + fs + 'px "Playfair Display",serif';
+    const tw = this.ctx.measureText(this.heroName).width * 1.15;
+    const cx = this.hero.x, cy = this.hero.y;
+    for (let i = 0; i < 400; i++) {
+      this.particles.push({
+        type: 'ash',
+        x: cx - tw / 2 + Math.random() * tw,
+        y: cy - fs * 0.4 + Math.random() * fs * 0.8,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: -(0.3 + Math.random() * 1.5),
+        size: 1 + Math.random() * 2.5, life: 1,
+        decay: 0.002 + Math.random() * 0.004,
+        alpha: 0.6, delay: Math.random() * 4,
+      });
+    }
+  }
+
+  _flash(intensity) {
+    this.flashes.push({ alpha: intensity, decay: 0.025 + intensity * 0.015 });
+  }
+
+  _flyLetter(char, sx, sy, ex, ey, dur, onArrive) {
+    this.letterAnims.push({
+      char, sx, sy, ex, ey,
+      t0: performance.now() / 1000 - this.t0,
+      dur, arrived: false, onArrive,
+    });
+  }
+
+  // ── Main Render Loop ──
+
+  _tick() {
+    if (this.stopped) return;
+    const ctx = this.ctx;
+
+    ctx.fillStyle = '#1A0810';
+    ctx.fillRect(0, 0, this.W, this.H);
+
+    if (this.phase <= 2) this._drawCosmicBg();
+    this._updateParticles();
+    if (this.goldSpark) this._drawGoldSpark();
+    this._drawShockwaves();
+    this._drawFlyingLetters();
+    if (this.hero) this._drawHeroName();
+    this._drawNarrative();
+    this._drawFlashes();
+
+    this._raf = requestAnimationFrame(() => this._tick());
+  }
+
+  _drawCosmicBg() {
+    const ctx = this.ctx;
+    const grad = ctx.createRadialGradient(
+      this.W / 2, this.H * 0.6, 0,
+      this.W / 2, this.H * 0.6, Math.max(this.W, this.H) * 0.7
+    );
+    grad.addColorStop(0, 'rgba(107,20,40,0.45)');
+    grad.addColorStop(0.5, 'rgba(59,18,32,0.3)');
+    grad.addColorStop(1, 'rgba(26,8,16,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, this.W, this.H);
+  }
+
+  _updateParticles() {
+    const ctx = this.ctx;
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+      const p = this.particles[i];
+      if (p.delay && p.delay > 0) { p.delay -= 0.016; continue; }
+
+      p.x += p.vx; p.y += p.vy;
+      if (p.type === 'energy' || p.type === 'spark') {
+        p.vy += 0.015; p.vx *= 0.995; p.vy *= 0.995;
+      }
+      if (p.type !== 'cosmic') p.life -= p.decay;
+      if (p.type === 'cosmic') {
+        if (p.x < -10) p.x = this.W + 10;
+        if (p.x > this.W + 10) p.x = -10;
+        if (p.y < -10) p.y = this.H + 10;
+        if (p.y > this.H + 10) p.y = -10;
+      }
+      if (p.life <= 0 && p.type !== 'cosmic') { this.particles.splice(i, 1); continue; }
+
+      const a = p.alpha * (p.type === 'cosmic' ? 1 : Math.max(0, p.life));
+      if (a <= 0.01) continue;
+      const r = Math.max(0.1, p.size * (p.type === 'cosmic' ? 1 : p.life));
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+
+      if (p.type === 'cosmic') {
+        ctx.fillStyle = 'hsla(' + p.hue + ',70%,55%,' + a + ')';
+      } else if (p.type === 'energy' || p.type === 'spark') {
+        ctx.fillStyle = 'hsla(' + p.hue + ',90%,60%,' + a + ')';
+        ctx.shadowColor = 'hsla(' + p.hue + ',95%,50%,0.5)';
+        ctx.shadowBlur = p.type === 'spark' ? 12 : 6;
+      } else if (p.type === 'ash') {
+        ctx.fillStyle = 'rgba(232,212,176,' + a + ')';
+      }
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  _drawGoldSpark() {
+    const ctx = this.ctx;
+    const g = this.goldSpark;
+    g.pulse += 0.05;
+    if (g.growing) { g.r = Math.min(g.r + 0.04, g.maxR); g.maxR += 0.008; }
+    const b = 0.4 + Math.sin(g.pulse) * 0.2 + g.r * 0.15;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(g.x, g.y, 2 + g.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(255,215,0,' + Math.min(1, b) + ')';
+    ctx.shadowColor = 'rgba(255,200,0,0.8)';
+    ctx.shadowBlur = 15 + g.r * 4;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  _drawShockwaves() {
+    const ctx = this.ctx;
+    for (let i = this.shockwaves.length - 1; i >= 0; i--) {
+      const s = this.shockwaves[i];
+      s.r += s.speed * 0.016;
+      s.alpha *= 0.97;
+      if (s.r > s.maxR || s.alpha < 0.01) { this.shockwaves.splice(i, 1); continue; }
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(184,134,12,' + s.alpha + ')';
+      ctx.lineWidth = s.lineWidth * Math.max(0.1, 1 - s.r / s.maxR);
+      ctx.shadowColor = 'rgba(232,180,40,0.5)';
+      ctx.shadowBlur = 20;
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  _drawFlyingLetters() {
+    const ctx = this.ctx;
+    const t = performance.now() / 1000 - this.t0;
+    const fontSize = Math.min(this.W * 0.45, 280);
+    ctx.save();
+    ctx.font = '900 ' + fontSize + 'px "Playfair Display",serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    for (let i = this.letterAnims.length - 1; i >= 0; i--) {
+      const L = this.letterAnims[i];
+      const elapsed = t - L.t0;
+      const progress = Math.min(1, elapsed / L.dur);
+
+      if (progress >= 1 && !L.arrived) {
+        L.arrived = true;
+        if (L.onArrive) L.onArrive();
+      }
+
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const x = L.sx + (L.ex - L.sx) * ease;
+      const y = L.sy + (L.ey - L.sy) * ease;
+
+      // Motion blur trail
+      if (progress < 1) {
+        for (let b = 4; b >= 1; b--) {
+          const bp = Math.max(0, progress - b * 0.025);
+          const be = 1 - Math.pow(1 - bp, 3);
+          const bx = L.sx + (L.ex - L.sx) * be;
+          const by = L.sy + (L.ey - L.sy) * be;
+          ctx.fillStyle = 'rgba(184,134,12,' + (0.12 / b) + ')';
+          ctx.fillText(L.char, bx, by);
+        }
+      }
+
+      const mg = ctx.createLinearGradient(x, y - fontSize / 2, x, y + fontSize / 2);
+      mg.addColorStop(0, '#F0DCA0');
+      mg.addColorStop(0.3, '#B8860C');
+      mg.addColorStop(0.5, '#E8D4B0');
+      mg.addColorStop(0.7, '#8B6914');
+      mg.addColorStop(1, '#C8A850');
+      ctx.fillStyle = mg;
+      ctx.shadowColor = 'rgba(184,134,12,0.5)';
+      ctx.shadowBlur = 15;
+      ctx.fillText(L.char, x, y);
+
+      if (L.arrived && elapsed > L.dur + 1.2) this.letterAnims.splice(i, 1);
+    }
+    ctx.restore();
+  }
+
+  _heroFontSize() {
+    return Math.min(this.W * 0.17, 130);
+  }
+
+  _drawHeroName() {
+    const ctx = this.ctx;
+    const h = this.hero;
+
+    h.scale += (h.targetScale - h.scale) * 0.12;
+    h.alpha = Math.min(h.targetAlpha, h.alpha + 0.05);
+    h.shake *= 0.92;
+    h.energyPhase += 0.03;
+    if (h.dissolving) h.dissolveAlpha = Math.max(0, h.dissolveAlpha - 0.004);
+
+    const fontSize = this._heroFontSize();
+    const ga = h.alpha * h.dissolveAlpha;
+
+    ctx.save();
+    ctx.translate(
+      h.x + (Math.random() - 0.5) * h.shake,
+      h.y + (Math.random() - 0.5) * h.shake
+    );
+    ctx.scale(h.scale, h.scale);
+
+    ctx.font = '900 ' + fontSize + 'px "Playfair Display",serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const grad = ctx.createLinearGradient(0, -fontSize / 2, 0, fontSize / 2);
+    grad.addColorStop(0, '#F8ECD0');
+    grad.addColorStop(0.2, '#C89820');
+    grad.addColorStop(0.45, '#F0DCA0');
+    grad.addColorStop(0.65, '#8B6914');
+    grad.addColorStop(1, '#D4A830');
+
+    const glow = 0.4 + Math.sin(h.energyPhase) * 0.2;
+    ctx.shadowColor = 'rgba(232,180,40,' + (glow * ga) + ')';
+    ctx.shadowBlur = 40 + Math.sin(h.energyPhase * 2) * 12;
+    ctx.globalAlpha = ga;
+    ctx.fillStyle = grad;
+
+    // Spaced letters
+    const spacing = fontSize * 0.15;
+    const chars = h.text.split('');
+    const totalW = ctx.measureText(h.text).width + spacing * (chars.length - 1);
+    let cx = -totalW / 2;
+    chars.forEach(ch => {
+      const cw = ctx.measureText(ch).width;
+      ctx.fillText(ch, cx + cw / 2, 0);
+      cx += cw + spacing;
+    });
+
+    ctx.strokeStyle = 'rgba(184,134,12,' + (0.4 * ga) + ')';
+    ctx.lineWidth = 1.5;
+    cx = -totalW / 2;
+    chars.forEach(ch => {
+      const cw = ctx.measureText(ch).width;
+      ctx.strokeText(ch, cx + cw / 2, 0);
+      cx += cw + spacing;
+    });
+
+    ctx.restore();
+
+    // Full name text below
+    ctx.globalAlpha = 1;
+    ctx.shadowBlur = 0;
+  }
+
+  _drawNarrative() {
+    if (!this.narrative) return;
+    const ctx = this.ctx;
+    const n = this.narrative;
+    n.alpha += (n.target - n.alpha) * 0.025;
+    const fs = Math.max(28, Math.min(this.W * 0.065, 42));
+    ctx.save();
+    ctx.font = 'italic ' + fs + 'px "Playfair Display",serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(248,237,228,' + n.alpha + ')';
+    ctx.shadowColor = 'rgba(232,212,176,' + (n.alpha * 0.4) + ')';
+    ctx.shadowBlur = 8;
+    ctx.fillText(n.text, this.W / 2, this.H * 0.22);
+    ctx.restore();
+  }
+
+  _drawFlashes() {
+    const ctx = this.ctx;
+    for (let i = this.flashes.length - 1; i >= 0; i--) {
+      const f = this.flashes[i];
+      ctx.fillStyle = 'rgba(248,237,228,' + f.alpha + ')';
+      ctx.fillRect(0, 0, this.W, this.H);
+      f.alpha -= f.decay;
+      if (f.alpha <= 0) this.flashes.splice(i, 1);
+    }
+  }
+}
 
 // ── Bubble Physics Simulation ───────────────────────────────────────────────
 class BubbleSimulation {
