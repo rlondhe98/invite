@@ -2,6 +2,10 @@
 //  NAMING CEREMONY — MAIN APPLICATION
 // ══════════════════════════════════════════════════════════
 
+// ?reveal=preview in the URL lets you preview the reveal without going live
+const _revealPreview = new URLSearchParams(window.location.search).get('reveal') === 'preview';
+const _isReveal = CONFIG.revealName || _revealPreview;
+
 const App = {
   guest:  null,          // guest data from Apps Script
   lang:   CONFIG.defaultLang,
@@ -72,7 +76,7 @@ const App = {
     const scr = document.querySelector('#screen-invitation .inv-scroll');
     if (scr) scr.scrollTop = 0;
 
-    if (CONFIG.revealName && !this._revealShown) {
+    if (_isReveal && !this._revealShown) {
       this._revealShown = true;
       this._showRevealOverlay();
     }
@@ -106,7 +110,7 @@ const App = {
     // Hero title: reveal on event day or show honorTitle
     const babyNameEl = document.getElementById('baby-name');
     const invScreen  = document.getElementById('screen-invitation');
-    if (CONFIG.revealName) {
+    if (_isReveal) {
       babyNameEl.textContent = this.lang === 'mr'
         ? (CONFIG.revealTextMr || CONFIG.revealText)
         : CONFIG.revealText;
