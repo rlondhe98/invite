@@ -34,6 +34,10 @@ const API = {
         { name: 'Aditi', count: 4 }, { name: 'Arya',  count: 3 },
         { name: 'Anvi',  count: 2 }, { name: 'Anjali',count: 2 },
         { name: 'Priya', count: 1 }, { name: 'Nisha', count: 1 },
+        { name: 'Ira',   count: 1 }, { name: 'Kiara', count: 1 },
+        { name: 'Myra',  count: 1 }, { name: 'Navya', count: 1 },
+        { name: 'Riya',  count: 1 }, { name: 'Saanvi',count: 1 },
+        { name: 'Tara',  count: 1 },
       ]};
     }
     return { success: true };
